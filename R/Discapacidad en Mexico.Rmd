@@ -1,0 +1,184 @@
+---
+title: "Población en situación de discapacidad"
+author: "Diana Villasana Ocampo"
+knit: (function(inputFile, encoding) {
+       rmarkdown::render(inputFile, encoding = encoding, output_dir = "../Output/")
+  })
+output:
+   html_document:
+      code_folding: hide
+      highlight: tango
+      theme: flatly
+      toc: true
+      toc_depth: 3
+      toc_float:
+        collapsed: yes
+---
+
+```{=html}
+<style type="text/css">
+body {
+text-align: justify;
+font-style: normal;
+font-family: "Montserrat";
+font-size: 12px
+}
+h1.title {
+  font-size: 40px;
+  color: #000D3B;
+}
+h1 {
+  color: #B6854D;
+}
+h2 {
+  color: #172984;
+}
+h3 {
+  color: #172984;
+}
+</style>
+```
+
+```{=html}
+<style>
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #1C3BA4
+}
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li>a:focus {
+    color: #ffffff;
+    background-color: #09C2BC
+}
+</style>
+```
+
+```{=html}
+<style>
+.tile1-text {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #0A6A87;
+    list-style: none;
+}
+.top1-tiles a:nth-of-type(1):hover, .top-tiles1 a:nth-of-type(1):focus{
+    color: #ffffff;
+    background: #0A6A87
+}
+</style>
+```
+
+```{=html}
+<style>
+.tile2-text {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #0A6CC8;
+    list-style: none;
+}
+.top2-tiles a:nth-of-type(1):hover, .top2-tiles a:nth-of-type(1):focus{
+    color: #ffffff;
+    background: #0A6CC8
+}
+</style>
+```
+
+```{=html}
+<style>
+.math {
+  font-size: 15px;
+  color: #1e42ab;
+}
+</style>
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE, 
+                      cache.lazy = FALSE, class.source = "fold-show")
+knitr::opts_knit$set(root.dir = here::here())
+setwd(here::here())
+```
+
+```{r,echo=FALSE, eval=FALSE}
+rm(list = ls())
+```
+
+```{r, echo = FALSE, results=FALSE}
+# Paquetes que se usaron en el documento 
+require(dplyr)          #A Grammar of Data Manipulation 
+require(ggplot2)        # Generar gráficos ggplot y la geometría de un mapa
+require(RColorBrewer)
+require(ggspatial)
+require(ggpubr)
+require(knitr)
+require(kableExtra)
+require(openxlsx)
+require(readxl)
+require(rgdal)          #Para importar shapefiles. 
+require(sp)             # Classes and Methos for Spatial Data
+library(spdep)    # Índice de Moran 
+require(spdplyr)        #Data manipulation verbs for the sptial classes
+require(tidyverse) 
+require(unikn)          # Paleta de colores
+```
+
+```{r, echo = FALSE, results=FALSE}
+# Se descargan las fuentes de la google fonts
+require(showtext)
+library(extrafont)
+# activar showtext
+windowsFonts()
+```
+
+
+## Los Derechos de las Personas con Discapacidad en México  
+
+Cuando se habla de los **Derechos de las Personas con Discapacidad en México**, es un tema que ha ido tomando relevancia desde el año 2011 con la promulgación de la **Ley General para la Inclusión de las Personas con Discapacidad**, que marcó un hito importante en el reconocimiento y protección de sus derechos. En diferentes contextos de derechos humanos, los temas en materia de género en México comenzaron a tomar relevancia significativa en el año 1974, con la reforma al Artículo 4° Constitucional que estableció la igualdad jurídica entre hombres y mujeres. Por su parte, los temas relacionados con los derechos de las personas indígenas y afrodescendientes en México empezaron a tomar mayor relevancia a partir de 1992, con el reconocimiento constitucional de la composición pluricultural de la nación, fortalecido posteriormente con la reforma constitucional de 2001 que reconoció los derechos de los pueblos indígenas. Este marco normativo emergente ha evidenciado la histórica marginación y falta de reconocimiento que estos grupos poblacionales han enfrentado. 
+
+###  Instrumentos en México  
+
+Existen diversos instrumentos aplicados en México que recopilan información sobre la población con discapacidad:
+
+- Censos generales de Población y Vivienda (Útima actualización 2020)
+- Encuesta Nacional de Empleo y Seguridad Social (`ENESS`)  (Útima actualización 2017);
+- Encuesta Nacional de Salud y Nutrición (Útima actualización 2023); 
+- Encuesta Nacional de Uso del Tiempo (`ENESS`)  (Útima actualización 2024);
+- Encuesta Nacional de Ingresos y Gastos en los Hogares (`ENIGH`) (Útima actualización 2022);
+- Encuestas Nacional de la Dinámica Demográfica (`ENADID`) (Útima actualización 2023);
+- Encuestas Nacional de la Dinámica y las Relaciones en los Hogares (`ENDIREH`) (Útima actualización 2021);
+- Encuesta Nacional sobre Salud y Envejecimiento en México (`ENASEM`) (Útima actualización 2021).
+
+
+## Censo de Población y Vivienda 2020  
+
+El sistema censal mexicano ha experimentado una notable transformación desde sus inicios en 1895, cuando el INEGI comenzó a realizar estos ejercicios estadísticos. Lo que comenzó como un simple conteo poblacional que registraba datos básicos (número de habitantes, edad, sexo, estado civil y nivel de alfabetización) evolucionó significativamente entre 2000 y 2010. Durante este período, el censo amplió su alcance para incluir aspectos más complejos como las características de la vivienda, patrones de migración y condiciones económicas de la población. En 2002, se introdujo el enfoque de la **CIF** en la **Encuesta Nacional de Evaluación al Desempeño (`ENED`)**, incorporando preguntas para identificar la dificultad para realizar tareas (INEGI, 2017).    
+
+Un avance fundamental en esta evolución fue la incorporación del **cuestionario del Grupo de Washington (`WG`)** en el **Censo 2020**. Este cambio metodológico representó un avance crucial en la medición de la discapacidad, al reemplazar el enfoque de autopercepción por un sistema basado en la evaluación de limitaciones funcionales. El nuevo método evalúa seis dimensiones: la capacidad de ver, oír, caminar o subir escaleras, recordar o concentrarse, realizar el aseo personal y comunicarse. Esta metodología permite una medición más precisa de la discapacidad, facilita comparaciones internacionales y contribuye al desarrollo de políticas públicas más efectivas en materia de inclusión y accesibilidad.  
+
+### Cuestionarios anteriores al 2020   
+
+En los **censos anteriores al 2020**, el **enfoque de autopercepción** consistía en preguntas más generales y menos estructuradas sobre discapacidad. Las principales diferencias eran:
+
+En los censos 2000-2010:
+
+- Se preguntaba de manera general sobre **dificultades físicas** o **sensoriales**   
+- **No se medía con precisión la severidad de las limitaciones**   
+- **No había una medición del impacto en la vida diaria**
+
+### Inclusión del Cuestionario del Grupo de Washington (Censo 2020)
+
+Para el **Censo de Población y Vivienda 2020**, el INEGI incorporó el **conjunto de preguntas del Grupo de Washington sobre Discapacidad (WG-SS, por sus siglas en inglés)**. Este grupo de preguntas busca medir la discapacidad en función de **limitaciones en la actividad** en lugar de una simple declaración de discapacidad.  
+
+El cuestionario del **Grupo de Washington** en el **Censo 2020** incluyó seis preguntas clave sobre **dificultades funcionales** en:
+
+1. **Ver** (aun usando lentes).
+2. **Oír** (aun con aparato auditivo).
+3. **Caminar o subir escaleras**.
+4. **Recordar o concentrarse**.
+5. **Cuidar su propio aseo personal**.
+6. **Comunicar y entender lo que otros dicen**.
+
+Estas preguntas permiten **comparaciones internacionales** y proporcionan una mejor medición de la discapacidad en términos de **grados de dificultad**, ayudando a mejorar políticas públicas de inclusión y accesibilidad.
