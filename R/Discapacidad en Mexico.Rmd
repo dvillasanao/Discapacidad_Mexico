@@ -174,11 +174,16 @@ Para el **Censo de Población y Vivienda 2020**, el INEGI incorporó el **conjun
 
 El cuestionario del **Grupo de Washington** en el **Censo 2020** incluyó seis preguntas clave sobre **dificultades funcionales** en:
 
-1. **Ver** (aun usando lentes).
-2. **Oír** (aun con aparato auditivo).
-3. **Caminar o subir escaleras**.
-4. **Recordar o concentrarse**.
-5. **Cuidar su propio aseo personal**.
-6. **Comunicar y entender lo que otros dicen**.
+1. **Ver:** Abarca la pérdida total de la vista en uno o ambos ojos, así como a los débiles visuales y a los que aun usando lentes no pueden ver bien por lo avanzado de sus problemas visuales.   
+
+2. **Oír:** Incluye a las personas que no pueden oír, así como aquellas que presentan dificultad para escuchar (debilidad auditiva), en uno o ambos oídos, a las que aun usando aparato auditivo tiene dificultad para escuchar debido a lo avanzado de su problema.  
+
+3. **Caminar, subir o bajar**. Hace referencia a la dificultad de una persona para moverse, caminar, desplazarse o subir escaleras debido a la falta de toda o una parte de sus piernas; incluye también a quienes teniendo sus piernas no tienen movimiento o presentan restricciones para moverse, de tal forma que necesitan ayuda de otras personas, silla de ruedas u otro aparato, como andadera o pierna artificial.  
+
+4. **Recordar o concentrarse**. Incluye las limitaciones o dificultades para aprender una nueva tarea o para poner atención por determinado tiempo, así como limitaciones para recordar información o actividades que se deben realizar en la vida cotidiana.  
+
+5. **Dificultad para bañarse, vestirse o comer.** Son los problemas que tiene una persona para desarrollar tareas del cuidado personal o cuidar su salud.  
+
+6. **Hablar o comunicarse**. Hace referencia a los problemas para comunicarse con los demás, debido a limitaciones para hablar o porque no pueden platicar o conversar de forma comprensible.  
 
 Estas preguntas permiten **comparaciones internacionales** y proporcionan una mejor medición de la discapacidad en términos de **grados de dificultad**, ayudando a mejorar políticas públicas de inclusión y accesibilidad.
