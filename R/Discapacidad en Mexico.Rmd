@@ -186,7 +186,143 @@ El cuestionario del **Grupo de Washington** en el **Censo 2020** incluyó seis p
 
 6. **Hablar o comunicarse**. Hace referencia a los problemas para comunicarse con los demás, debido a limitaciones para hablar o porque no pueden platicar o conversar de forma comprensible.  
 
-Estas preguntas permiten **comparaciones internacionales** y proporcionan una mejor medición de la discapacidad en términos de **grados de dificultad**, ayudando a mejorar políticas públicas de inclusión y accesibilidad.  
+Estas preguntas permiten **comparaciones internacionales** y proporcionan una mejor medición de la discapacidad en términos de **grados de dificultad**, ayudando a mejorar políticas públicas de inclusión y accesibilidad.   
+
+Se cargan las bases de datos de discapacidad, obtenido del los tabulados básicos del Censo de Población y Vivienda 2020 [(Enlace)](https://www.inegi.org.mx/programas/ccpv/2020/#tabulados)  
+
+```{r}
+data <- read.xlsx("Bases/cpv2020_b_eum_06_discapacidad.xlsx", 
+                  sheet = "02", 
+                  colNames = FALSE,
+                  startRow = 10, 
+                  skipEmptyRows = TRUE)
+# Columnas
+colnames(data) <- c("Entidad Federativa", "Sexo", "Grupos quinquenales", "Población Total", 
+                    "Población con discapacidad, limitación o con algún problema o condición mental",
+                    "Con discapacidad (Total)",
+                    "Con discapacidad (Ver aun usando lentes)",
+                    "Con discapacidad (Oír aun usando aparato auditivo)",
+                    "Con discapacidad (Caminar, subir o bajar)",
+                    "Con discapacidad (Recordar o concentranrse)",
+                    "Con discapacidad (Bañarse, vestirse o comer)",
+                    "Con discapacidad (Hablar o comunicarse)",
+                    "Con limitación (Total)",
+                    "Con limitación (Ver aun usando lentes)",
+                    "Con limitación (Oír aun usando aparato auditivo)",
+                    "Con limitación (Caminar, subir o bajar)",
+                    "Con limitación (Recordar o concentranrse)",
+                    "Con limitación (Bañarse, vestirse o comer)",
+                    "Con limitación (Hablar o comunicarse)",
+                    "Población con algún problema o condición mental",
+                    "Sin discapacidad, limitación, problema o condición mental",
+                    "No especificado")
+```
+
+Filtramos los datos a nivel nacional 
+
+```{r}
+data <- data %>% 
+         filter(`Entidad Federativa` %in% "Estados Unidos Mexicanos")
+```
+
+
+<div style="height:700px;overflow:auto;">
+```{r, echo = FALSE}
+require(gt)
+
+data %>% 
+ gt() %>%
+  tab_header(title = "Población total por entidad federativa, sexo, grupos quinquenales según discapacidad o limitación por tipo de actividad cotidiana que realiza y población con algún problema o condición mental ",
+             subtitle = "Censo de Población y Vivienda 2020") %>%
+   tab_footnote(footnote = "Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico") %>%
+     fmt_integer(columns = names(data)[4:22], 
+                sep_mark = " ") %>%
+     tab_options(heading.title.font.size = 14, 
+                 heading.subtitle.font.size = 12,
+                 table.font.names = "Century Gothic",
+                 table.font.size = 10,
+                 data_row.padding = px(1)) %>%
+      tab_style(style = list(cell_text(align = "left",
+                                       weight = 'bold')),
+                locations = list(cells_title(groups = c("title")))) %>%
+       tab_style(style = list(cell_text(align = "left")),
+                 locations = list(cells_title(groups = c("subtitle")))) %>%
+        cols_width(starts_with("Entidad Federativa") ~ px(200),
+                   everything() ~ px(100)) %>%
+         as_raw_html() 
+```
+</div>
+
+```{r}
+require(ggplot2)
+require(ggpubr)
+require(Hmisc)
+require(tidyverse)
+require(tibble)
+require(viridis)
+
+Totales <- data %>% 
+            filter(Sexo %in% "Total" & `Grupos quinquenales` %in% "Total") %>% 
+             select(-c(`Entidad Federativa`, Sexo, `Grupos quinquenales`)) %>%
+              t() 
+
+Hombres <- data %>% 
+            filter(Sexo %in% "Hombres" & `Grupos quinquenales` %in% "Total") %>% 
+             select(-c(`Entidad Federativa`, Sexo, `Grupos quinquenales`)) %>%
+              t()
+
+Mujeres <- data %>% 
+            filter(Sexo %in% "Mujeres" & `Grupos quinquenales` %in% "Total") %>% 
+             select(-c(`Entidad Federativa`, Sexo, `Grupos quinquenales`)) %>%
+
+                t() 
+
+tabla <- data %>% 
+          filter(Sexo %nin% "Total" & `Grupos quinquenales`%nin% c("Total", "No especificado")) %>% 
+           mutate(percent_POBTOT = case_when(Sexo %in% "Hombres" ~ .$`Población Total` / Totales["Población Total",] * 100,
+                                             Sexo %in% "Mujeres" ~ .$`Población Total` / Totales["Población Total",] * 100)) %>%
+            mutate(percent = ifelse(Sexo %in% "Hombres", -1 * .$percent_POBTOT, .$percent_POBTOT))
+
+p <- tabla %>% 
+      ggplot(aes(x = percent,
+                 y = `Grupos quinquenales`)) + 
+       geom_col(aes(color = Sexo, fill = Sexo)) + 
+        geom_smooth(color = "black", method = "loess", se = FALSE, show.legend = FALSE, size = 2) +
+        geom_label(aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                   label = round(abs(percent), 2)),
+                   fill = "white",
+                   alpha = 0.5, 
+                   family = "Montserrat",
+                   label.size = 0) + 
+         theme_bw() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+               ) + 
+            scale_fill_manual(values = c("#C70039", "#1d68d1")) + 
+             scale_color_manual(values = c("#C70039", "#1d68d1")) +
+               labs(title = "Piramide poblacional por grupo quinquenal",
+                    x = "Porcentaje de población",
+                    fill = "Sexo",
+                    color = "Sexo",
+                    caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+  
+p
+
+path = "Output/Piramide Población Total.pdf"
+ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+1 Incluye una estimación de población de 6 337 751 personas que corresponden a 1 588 422 viviendas sin información de ocupantes y menores omitidos.
+2 La suma de la población con discapacidad, limitación y con algún problema o condición mental es mayor, a la población total en dicha situación, por aquellas personas que tienen más de una discapacidad o limitación.
+3 La suma de las actividades cotidianas puede ser mayor al total por aquellas personas que tienen más de una discapacidad.
+4 La suma de las actividades cotidianas puede ser mayor al total por aquellas personas que tienen más de una limitación.
+
 
 ## Referencias  
 
