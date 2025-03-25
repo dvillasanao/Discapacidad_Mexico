@@ -426,7 +426,7 @@ p
 
 ![](../Output/Población con discapacidad_Page_3.png){width="90%" fig-align="center"}
 
-![](../Output/Población con discapacidad_Page_4.png){width="70%" fig-align="center"}
+![](../Output/Población con discapacidad_Page_4.png){width="75%" fig-align="center"}
 
 3 La suma de las actividades cotidianas puede ser mayor al total por aquellas personas que tienen más de una discapacidad.
 4 La suma de las actividades cotidianas puede ser mayor al total por aquellas personas que tienen más de una limitación.
