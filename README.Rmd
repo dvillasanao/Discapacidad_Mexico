@@ -23,6 +23,8 @@ Este repositorio recopila y analiza información sobre la población con discapa
 
 </div>
 
+**Elaboración propia**
+
 ## Fuentes de Datos
 
 La información presentada en este repositorio se basa en los siguientes instrumentos y encuestas:
