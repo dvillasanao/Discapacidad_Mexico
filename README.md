@@ -10,6 +10,14 @@ caracterizar la situación de las personas con discapacidad en el país,
 con un enfoque en su distribución, condiciones de vida y acceso a
 servicios.
 
+<div style="display: flex; justify-content: center; gap: 10px;">
+
+<img src="Output/Población con discapacidad_Page_3.png" width="50%" style="margin: 1px;">
+
+<img src="Output/Población con discapacidad_Page_4.png" width="45%" style="margin: 1px;">
+
+</div>
+
 ## Fuentes de Datos
 
 La información presentada en este repositorio se basa en los siguientes
@@ -48,3 +56,13 @@ instrumentos y encuestas:
   comparabilidad de los datos.
 - Es recomendable revisar la documentación oficial de cada encuesta para
   comprender a fondo el contexto y las limitaciones de los datos.
+
+## Resultados
+
+**Enlace**:
+<https://dvillasanao.github.io/Discapacidad_Mexico/Output/Discapacidad-en-Mexico.html>
+
+## Código de Conducta
+
+Por favor, revisa nuestro [Código de Conducta](CODE_OF_CONDUCT.md) antes
+de contribuir.
