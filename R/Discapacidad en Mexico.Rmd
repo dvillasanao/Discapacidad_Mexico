@@ -146,14 +146,23 @@ Cuando se habla de los **Derechos de las Personas con Discapacidad en México**,
 
 Existen diversos instrumentos aplicados en México que recopilan información sobre la población con discapacidad:
 
-- Censos generales de Población y Vivienda (Útima actualización 2020)
-- Encuesta Nacional de Empleo y Seguridad Social (`ENESS`)  (Útima actualización 2017);
-- Encuesta Nacional de Salud y Nutrición (Útima actualización 2023); 
-- Encuesta Nacional de Uso del Tiempo (`ENESS`)  (Útima actualización 2024);
-- Encuesta Nacional de Ingresos y Gastos en los Hogares (`ENIGH`) (Útima actualización 2022);
-- Encuestas Nacional de la Dinámica Demográfica (`ENADID`) (Útima actualización 2023);
-- Encuestas Nacional de la Dinámica y las Relaciones en los Hogares (`ENDIREH`) (Útima actualización 2021);
-- Encuesta Nacional sobre Salud y Envejecimiento en México (`ENASEM`) (Útima actualización 2021).
+* **Censos Generales de Población y Vivienda (INEGI):**
+    * Última actualización: 2020.
+    * Incluye el Cuestionario del Grupo de Washington para una mejor identificación de la discapacidad.
+* **Encuesta Nacional de Empleo y Seguridad Social (ENESS - INEGI):**
+    * Última actualización: 2017.
+* **Encuesta Nacional de Salud y Nutrición (ENSANUT):**
+    * Última actualización: 2023.
+* **Encuesta Nacional de Uso del Tiempo (ENUT - INEGI):**
+    * Última actualización: 2024.
+* **Encuesta Nacional de Ingresos y Gastos en los Hogares (ENIGH - INEGI):**
+    * Última actualización: 2022.
+* **Encuesta Nacional de la Dinámica Demográfica (ENADID - INEGI):**
+    * Última actualización: 2023.
+* **Encuesta Nacional de la Dinámica y las Relaciones en los Hogares (ENDIREH - INEGI):**
+    * Última actualización: 2021.
+* **Encuesta Nacional sobre Salud y Envejecimiento en México (ENASEM):**
+    * Última actualización: 2021.
 
 
 ## Censo de Población y Vivienda 2020  
@@ -328,7 +337,7 @@ p
 ![](../Output/Piramide Población Total.png){width="90%" fig-align="center"}
 
 
-### Población con discapacidad, limitación o con algún problema o condición mental
+### Población con discapacidad, con limitación en la actividad cotidiana o con algún problema o condición mental 
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 require(ggplot2)
@@ -390,9 +399,9 @@ p
 2 La suma de la población con discapacidad, limitación y con algún problema o condición mental es mayor, a la población total en dicha situación, por aquellas personas que tienen más de una discapacidad o limitación.
 
 
-### Población con discapacidad, con limitación en la actividad cotidiana o con algún problema o condición mental 
-
-![](../Output/Población con discapacidad_Page_4.png){width="75%" fig-align="center"}   
+<p align="center">
+  <img src="../Output/Población%20con%20discapacidad_Page_4.png" alt="Población con discapacidad" width="50%">
+</p>
 **Elaboración propia**  
 
 
@@ -456,9 +465,10 @@ ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ![](../Output/Piramide Población con discapacidad.png){width="90%" fig-align="center"} 
 La discapacidad se concentra en los mayores de 60 años, quienes representan el 50.1% de la población con discapacidad en México. A partir de los 45 años en adelante la población con discapacidad recae más hacía el sexo femenino. 
 
+<p align="center">
+  <img src="../Output/Población%20con%20discapacidad_Page_5.png" alt="Población con discapacidad" width="90%">
+</p>
 
-
-![](../Output/Población con discapacidad_Page_5.png){width="75%" fig-align="center"}   
 
 **Elaboración propia** 
 
