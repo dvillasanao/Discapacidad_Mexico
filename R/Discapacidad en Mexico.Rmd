@@ -135,7 +135,12 @@ windowsFonts()
 
 ## Los Derechos de las Personas con Discapacidad en México  
 
-Cuando se habla de los **Derechos de las Personas con Discapacidad en México**, es un tema que ha ido tomando relevancia desde el año 2011 con la promulgación de la **Ley General para la Inclusión de las Personas con Discapacidad**, que marcó un hito importante en el reconocimiento y protección de sus derechos. En diferentes contextos de derechos humanos, los temas en materia de género en México comenzaron a tomar relevancia significativa en el año 1974, con la reforma al Artículo 4° Constitucional que estableció la igualdad jurídica entre hombres y mujeres. Por su parte, los temas relacionados con los derechos de las personas indígenas y afrodescendientes en México empezaron a tomar mayor relevancia a partir de 1992, con el reconocimiento constitucional de la composición pluricultural de la nación, fortalecido posteriormente con la reforma constitucional de 2001 que reconoció los derechos de los pueblos indígenas. Este marco normativo emergente ha evidenciado la histórica marginación y falta de reconocimiento que estos grupos poblacionales han enfrentado. 
+Cuando se habla de los **Derechos de las Personas con Discapacidad en México**, es un tema que ha ido tomando relevancia desde el año 2011 con la promulgación de la **Ley General para la Inclusión de las Personas con Discapacidad**, que marcó un hito importante en el reconocimiento y protección de sus derechos. En diferentes contextos de derechos humanos, los temas en materia de género en México comenzaron a tomar relevancia significativa en el año 1974, con la reforma al Artículo 4° Constitucional que estableció la igualdad jurídica entre hombres y mujeres. Por su parte, los temas relacionados con los derechos de las personas indígenas y afrodescendientes en México empezaron a tomar mayor relevancia a partir de 1992, con el reconocimiento constitucional de la composición pluricultural de la nación, fortalecido posteriormente con la reforma constitucional de 2001 que reconoció los derechos de los pueblos indígenas. Este marco normativo emergente ha evidenciado la histórica marginación y falta de reconocimiento que estos grupos poblacionales han enfrentado.   
+
+![](../Output/Población con discapacidad_Page_3.png){width="90%" fig-align="center"}   
+
+**Elaboración propia**   
+
 
 ###  Instrumentos en México  
 
@@ -387,12 +392,10 @@ p
 
 ### Población con discapacidad, con limitación en la actividad cotidiana o con algún problema o condición mental 
 
-![](../Output/Población con discapacidad_Page_3.png){width="90%" fig-align="center"}    
-
-**Elaboración propia**    
-
 ![](../Output/Población con discapacidad_Page_4.png){width="75%" fig-align="center"}   
-**Elaboración propia**
+**Elaboración propia**  
+
+
 La suma de las actividades cotidianas puede ser mayor al total por aquellas personas que tienen más de una discapacidad.
 
 ### Población con discapacidad
@@ -438,7 +441,7 @@ p <- tabla %>%
                ) + 
            scale_fill_manual(values = paleta) + 
             scale_color_manual(values = paleta) +
-             labs(title = "Piramide poblacional por grupo quinquenal",
+             labs(title = "Estructura de la población con discapacidad",
                   subtitle = stringr::str_wrap("Población con discapacidad", 50),
                   x = "Porcentaje de población",
                   fill = "Sexo",
@@ -447,10 +450,17 @@ p <- tabla %>%
   
 p
 
-#path = "Output/Piramide Población con discapacidad.pdf"
-#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+path = "Output/Piramide Población con discapacidad.pdf"
+ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 ![](../Output/Piramide Población con discapacidad.png){width="90%" fig-align="center"} 
+La discapacidad se concentra en los mayores de 60 años, quienes representan el 50.1% de la población con discapacidad en México. A partir de los 45 años en adelante la población con discapacidad recae más hacía el sexo femenino. 
+
+
+
+![](../Output/Población con discapacidad_Page_5.png){width="75%" fig-align="center"}   
+
+**Elaboración propia** 
 
 ## Referencias  
 
