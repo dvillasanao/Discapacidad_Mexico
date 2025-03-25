@@ -109,20 +109,19 @@ rm(list = ls())
 ```{r, echo = FALSE, results=FALSE}
 # Paquetes que se usaron en el documento 
 require(dplyr)          #A Grammar of Data Manipulation 
-require(ggplot2)        # Generar gráficos ggplot y la geometría de un mapa
 require(RColorBrewer)
-require(ggspatial)
-require(ggpubr)
 require(knitr)
 require(kableExtra)
 require(openxlsx)
 require(readxl)
 require(rgdal)          #Para importar shapefiles. 
-require(sp)             # Classes and Methos for Spatial Data
-library(spdep)    # Índice de Moran 
-require(spdplyr)        #Data manipulation verbs for the sptial classes
-require(tidyverse) 
 require(unikn)          # Paleta de colores
+require(ggplot2)
+require(ggpubr)
+require(Hmisc)
+require(tidyverse)
+require(tibble)
+require(viridis)
 ```
 
 ```{r, echo = FALSE, results=FALSE}
@@ -226,7 +225,7 @@ data <- data %>%
 ```
 
 
-<div style="height:700px;overflow:auto;">
+<div style="height:500px;overflow:auto;">
 ```{r, echo = FALSE}
 require(gt)
 
@@ -253,30 +252,29 @@ data %>%
 ```
 </div>
 
-```{r}
-require(ggplot2)
-require(ggpubr)
-require(Hmisc)
-require(tidyverse)
-require(tibble)
-require(viridis)
 
+```{r}
+## Población total
 Totales <- data %>% 
             filter(Sexo %in% "Total" & `Grupos quinquenales` %in% "Total") %>% 
              select(-c(`Entidad Federativa`, Sexo, `Grupos quinquenales`)) %>%
               t() 
 
+## Población total (Hombres)
 Hombres <- data %>% 
             filter(Sexo %in% "Hombres" & `Grupos quinquenales` %in% "Total") %>% 
              select(-c(`Entidad Federativa`, Sexo, `Grupos quinquenales`)) %>%
               t()
 
+## Población total (Mujeres)
 Mujeres <- data %>% 
             filter(Sexo %in% "Mujeres" & `Grupos quinquenales` %in% "Total") %>% 
              select(-c(`Entidad Federativa`, Sexo, `Grupos quinquenales`)) %>%
 
                 t() 
+```
 
+```{r, eval = FALSE, class.source = "fold-hide"}
 tabla <- data %>% 
           filter(Sexo %nin% "Total" & `Grupos quinquenales`%nin% c("Total", "No especificado")) %>% 
            mutate(percent_POBTOT = case_when(Sexo %in% "Hombres" ~ .$`Población Total` / Totales["Población Total",] * 100,
@@ -296,6 +294,7 @@ p <- tabla %>%
                    label.size = 0) + 
          theme_bw() + 
           theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
                 plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
                 axis.text = element_text(family = "Montserrat"), 
                 axis.title = element_text(family = "Montserrat", size = 15), 
@@ -304,19 +303,78 @@ p <- tabla %>%
                 legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
                 legend.position = "right"
                ) + 
-            scale_fill_manual(values = c("#C70039", "#1d68d1")) + 
-             scale_color_manual(values = c("#C70039", "#1d68d1")) +
-               labs(title = "Piramide poblacional por grupo quinquenal",
-                    x = "Porcentaje de población",
-                    fill = "Sexo",
-                    color = "Sexo",
-                    caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+           scale_fill_manual(values = c("#C70039", "#1d68d1")) + 
+            scale_color_manual(values = c("#C70039", "#1d68d1")) +
+             labs(title = "Piramide poblacional por grupo quinquenal",
+                  subtitle = "Población total",
+                  x = "Porcentaje de población",
+                  fill = "Sexo",
+                  color = "Sexo",
+                  caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
   
 p
 
-path = "Output/Piramide Población Total.pdf"
-ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+#path = "Output/Piramide Población Total.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
+
+![](../Output/Piramide Población Total.png){width="90%" fig-align="center"}
+
+
+```{r, eval = FALSE, class.source = "fold-hide"}
+require(ggplot2)
+require(ggpubr)
+require(Hmisc)
+require(tidyverse)
+require(tibble)
+require(viridis)
+
+paleta <- colorRampPalette(pals::kovesi.linear_blue_5_95_c73(2))(2)
+
+tabla <- data %>% 
+          filter(Sexo %nin% "Total" & `Grupos quinquenales`%nin% c("Total", "No especificado")) %>% 
+           mutate(percent_POBTOT = case_when(Sexo %in% "Hombres" ~ .$`Población con discapacidad, limitación o con algún problema o condición mental`/ Totales["Población con discapacidad, limitación o con algún problema o condición mental",] * 100,
+                                             Sexo %in% "Mujeres" ~ .$`Población con discapacidad, limitación o con algún problema o condición mental`/ Totales["Población con discapacidad, limitación o con algún problema o condición mental",] * 100)) %>%
+            mutate(percent = ifelse(Sexo %in% "Hombres", -1 * .$percent_POBTOT, .$percent_POBTOT))
+
+p <- tabla %>% 
+      ggplot(aes(x = percent,
+                 y = `Grupos quinquenales`)) + 
+       geom_col(aes(color = Sexo, fill = Sexo)) + 
+        geom_smooth(color = "black", method = "loess", se = FALSE, show.legend = FALSE, size = 2) +
+        geom_label(aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                   label = round(abs(percent), 2)),
+                   fill = "white",
+                   alpha = 0.5, 
+                   family = "Montserrat",
+                   label.size = 0) + 
+         theme_bw() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+               ) + 
+           scale_fill_manual(values = paleta) + 
+            scale_color_manual(values = paleta) +
+             labs(title = "Piramide poblacional por grupo quinquenal",
+                  subtitle = stringr::str_wrap("Población con discapacidad, limitación o con algún problema o condición mental", 50),
+                  x = "Porcentaje de población",
+                  fill = "Sexo",
+                  color = "Sexo",
+                  caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+  
+p
+
+#path = "Output/Piramide Población con discapacidad, limitación o con algún problema o condición mental.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+![](../Output/Piramide Población con discapacidad, limitación o con algún problema o condición mental.png){width="90%" fig-align="center"}
 
 1 Incluye una estimación de población de 6 337 751 personas que corresponden a 1 588 422 viviendas sin información de ocupantes y menores omitidos.
 2 La suma de la población con discapacidad, limitación y con algún problema o condición mental es mayor, a la población total en dicha situación, por aquellas personas que tienen más de una discapacidad o limitación.
