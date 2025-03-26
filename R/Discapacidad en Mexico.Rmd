@@ -141,6 +141,9 @@ Cuando se habla de los **Derechos de las Personas con Discapacidad en México**,
 
 **Elaboración propia**   
 
+### Plan Nacional de Desarrollo 2019-2024
+
+En México, hoy en día se ha considerado a la población con discapacidad como un grupo prioritario de atención según lo establecido en el **Plan Nacional de Desarrollo 2019-2024**, el cual marca un cambio significativo en el reconocimiento de sus derechos y necesidades. Este plan ha establecido directrices específicas y ha priorizado acciones concretas para garantizar que las personas con discapacidad puedan ejercer sus derechos de manera efectiva y participar plenamente en la sociedad. Asimismo, este grupo poblacional ha sido identificado como población objetivo de diversos programas sociales implementados por la **Secretaría de Bienestar**, lo cual demuestra un compromiso institucional con la inclusión y el bienestar de las personas con discapacidad en el país.
 
 ###  Instrumentos en México  
 
@@ -231,7 +234,7 @@ colnames(data) <- c("Entidad Federativa", "Sexo", "Grupos quinquenales", "Poblac
                     "No especificado")
 ```
 
-Filtramos los datos a nivel nacional 
+Se filtra la variable `Entidad Federativa` para conservar únicamente las filas donde su valor sea `Estados Unidos Mexicanos`.
 
 ```{r}
 data <- data %>% 
@@ -239,7 +242,7 @@ data <- data %>%
 ```
 
 
-<div style="height:500px;overflow:auto;">
+<div style="height:400px;overflow:auto;">
 ```{r, echo = FALSE}
 require(gt)
 
@@ -266,7 +269,9 @@ data %>%
 ```
 </div>
 
-### Población Total   
+### Población Total    
+ 
+Se extrae y se transponen los datos de **población total**, **hombres** y **mujeres** desde el data.frame original `data`.   
 
 ```{r}
 ## Población total
@@ -288,6 +293,8 @@ Mujeres <- data %>%
 
                 t() 
 ```
+
+### Estructura de la población total  
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 tabla <- data %>% 
@@ -333,11 +340,22 @@ p
 #ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 
+La estructura demográfica de México en 2020 presenta una pirámide poblacional en forma de campana, caracterizada por una base amplia y un vértice angosto. Este perfil indica una predominancia de población joven en la demografía mexicana. No obstante, es importante señalar que el grupo poblacional de 0-4 años muestra una reducción notable, lo cual sugiere la necesidad de realizar una reconstrucción de cohortes con los registros administrativos y de esta manera garantizar la coherencia y precisión de los datos demográficos.  
+
 
 ![](../Output/Piramide Población Total.png){width="90%" fig-align="center"}
 
 
-### Población con discapacidad, con limitación en la actividad cotidiana o con algún problema o condición mental 
+### Estructura de la población con discapacidad, con limitación en la actividad cotidiana o con algún problema o condición mental  
+
+De acuerdo con el Censo de Población y Vivienda 2020 del INEGI, la categoría "Población con discapacidad, con limitación en la actividad cotidiana o con algún problema o condición mental" agrupa a las personas que presentan alguna de las siguientes condiciones:
+
+
+**Personas con discapacidad:** Aquellas que tienen dificultad para realizar actividades básicas de la vida diaria como ver, escuchar, caminar, recordar o concentrarse, vestirse, bañarse o comunicarse.
+
+**Personas con limitación en la actividad cotidiana:** Individuos que, sin llegar a ser consideradas con discapacidad, presentan alguna dificultad para realizar actividades diarias como moverse, ver, escuchar, recordar, etc.
+
+**Personas con algún problema o condición mental:** Aquellas que han sido diagnosticadas o que presentan alguna condición relacionada con la salud mental, como depresión, ansiedad, esquizofrenia, entre otras.
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 require(ggplot2)
@@ -393,21 +411,27 @@ p
 #ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 
+ 
 ![](../Output/Piramide Población con discapacidad, limitación o con algún problema o condición mental.png){width="90%" fig-align="center"}
 
-1 Incluye una estimación de población de 6 337 751 personas que corresponden a 1 588 422 viviendas sin información de ocupantes y menores omitidos.
-2 La suma de la población con discapacidad, limitación y con algún problema o condición mental es mayor, a la población total en dicha situación, por aquellas personas que tienen más de una discapacidad o limitación.
+**Nota.-** Incluye una estimación de población de 6 337 751 personas que corresponden a 1 588 422 viviendas sin información de ocupantes y menores omitidos.   
 
+**Nota.-**La suma de la población con discapacidad, limitación y con algún problema o condición mental es mayor, a la población total en dicha situación, por aquellas personas que tienen más de una discapacidad o limitación.  
+
+
+El análisis demográfico revela una distribución uniforme de la población con discapacidad, limitación o condición mental en los grupos quinquenales desde 0 hasta 44 años. A partir de los 45 años, se observa un incremento significativo en esta población, con una notable concentración en el grupo etario de 50 a 64 años. Los datos también indican una mayor prevalencia de discapacidad entre la población femenina, según se evidencia en la pirámide poblacional.     
+
+
+#### Distribución de la población con discapacidad, limitación o con algún problema o condición mental 
 
 <p align="center">
   <img src="../Output/Población%20con%20discapacidad_Page_4.png" alt="Población con discapacidad" width="50%">
 </p>
 **Elaboración propia**  
 
+Los datos estadísticos más recientes indican que aproximadamente 20.8 millones de personas en México presentan alguna forma de discapacidad, limitación o condición mental, lo que representa el 16.5% de la población nacional. La distribución específica muestra que 13.7 millones de personas (10.9%) presentan únicamente limitaciones, 5.8 millones (4.4%) tienen discapacidad exclusivamente, 602 295 personas (0.5%) manifiestan tanto discapacidad como alguna condición mental, 264 518 individuos (0.2%) presentan limitación junto con alguna condición mental, y 723 770 personas (0.6%) tienen únicamente alguna condición mental.
 
-La suma de las actividades cotidianas puede ser mayor al total por aquellas personas que tienen más de una discapacidad.
-
-### Población con discapacidad
+### Estructura de la población con discapacidad
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 require(ggplot2)
@@ -463,14 +487,23 @@ path = "Output/Piramide Población con discapacidad.pdf"
 ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 ![](../Output/Piramide Población con discapacidad.png){width="90%" fig-align="center"} 
-La discapacidad se concentra en los mayores de 60 años, quienes representan el 50.1% de la población con discapacidad en México. A partir de los 45 años en adelante la población con discapacidad recae más hacía el sexo femenino. 
+De acuerdo con los datos demográficos, la población con discapacidad en México muestra una distribución significativa en los grupos de edad avanzada, con un 50.1% correspondiente a personas de 60 años y más. Es notable que existe una tendencia hacia una mayor prevalencia en la población femenina a partir de los 45 años. Evidenciando que la distribución por género: 53.8% corresponde a mujeres y 47.0% a hombres.  
+
+
 
 <p align="center">
   <img src="../Output/Población%20con%20discapacidad_Page_5.png" alt="Población con discapacidad" width="90%">
 </p>
 
+De acuerdo al Censo de Población y Vivienda, un **total de 6 179 890 personas** han reportado tener algún tipo de discapacidad. Estas personas experimentan diferentes grados de dificultad en la realización de actividades cotidianas. Las estadísticas indican que el 47.6% presenta dificultades para la movilidad (caminar, subir o bajar), el 43.5% tiene dificultades visuales incluso utilizando lentes correctivos, el 21.9% experimenta dificultades auditivas aun con aparatos auxiliares, el 18.9% requiere asistencia para actividades de autocuidado (baño, vestimenta o alimentación), el 18.6% presenta dificultades cognitivas (memoria o concentración), y el 15.3% enfrenta desafíos en la comunicación oral. Es importante señalar que estos porcentajes pueden sumar más del 100% debido a que algunas personas presentan múltiples tipos de discapacidad. 
 
-**Elaboración propia** 
+**Elaboración propia**   
+
+
+```{r}
+
+```
+
 
 ## Referencias  
 
