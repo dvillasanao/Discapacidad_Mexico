@@ -122,6 +122,7 @@ require(Hmisc)
 require(tidyverse)
 require(tibble)
 require(viridis)
+require(janitor)
 ```
 
 ```{r, echo = FALSE, results=FALSE}
@@ -499,11 +500,56 @@ De acuerdo al Censo de Población y Vivienda, un **total de 6 179 890 personas**
 
 **Elaboración propia**   
 
+#### Distribución de la población con discapacidad por grupos de edad   
 
-```{r}
+```{r, eval = FALSE, class.source = "fold-hide"}
+tabla <- data %>% 
+          mutate(Grupos = case_when(`Grupos quinquenales` %in% c("00-04 años", "05-09 años", "10-14 años") ~ "00 a 14 años",
+                                    `Grupos quinquenales` %in% c("15-19 años", "20-24 años", "25-29 años") ~ "15 a 29 años",
+                                    `Grupos quinquenales` %in% c("30-34 años", "35-39 años", "40-44 años", "45-49 años", "50-54 años", "55-59 años") ~ "30 a 59 años",
+                                    `Grupos quinquenales` %in% c("60-64 años", "65-69 años", "70-74 años", "75-79 años", "80-84 años") ~ "60 a 84 años",
+                                    `Grupos quinquenales` %in% c("85 años y más") ~ "85 años y más")) %>% 
+           filter(Sexo %in% "Total") %>%
+            filter(`Grupos quinquenales` %nin% c("Total", "No especificado")) %>%
+             group_by(Grupos) %>% 
+              summarise(Pob_Total = sum(`Con discapacidad (Total)`)) %>%
+               janitor::adorn_percentages(denominator = "col") 
 
+
+p <- tabla %>% 
+      ggplot() + 
+       geom_col(aes(x = Pob_Total, y = Grupos, color = Grupos, fill = Grupos)) + 
+        geom_text(aes(x = Pob_Total, y = Grupos, color = Grupos,
+                  label = paste(format(Pob_Total * 100, digits = 2), "%")),
+                  hjust = -0.5, 
+                  fontface = "bold", 
+                  family = "Montserrat Medium") + 
+        theme_transparent() + 
+          theme(plot.title = element_text(size = 22, hjust = 0, family = "Montserrat SemiBold", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "none"
+               ) + 
+           scale_fill_viridis_d(option = "A", begin = 0.3, end = 0.7) + 
+            scale_color_viridis_d(option = "A", begin = 0.3, end = 0.7) +
+             xlim(c(0, 0.5)) + 
+              labs(title = "Población con discapacidad",
+                   subtitle = stringr::str_wrap("Distribución por grupos de edad", 50),
+                   x = "",
+                   y = "",
+                   caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+p
+
+#path = "Output/Piramide Población con discapacidad_Grupos de edad.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 
+![](../Output/Piramide Población con discapacidad_Grupos de edad.png){width="90%" fig-align="center"} 
 
 ## Referencias  
 
