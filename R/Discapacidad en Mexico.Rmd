@@ -488,6 +488,7 @@ path = "Output/Piramide Población con discapacidad.pdf"
 ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 ![](../Output/Piramide Población con discapacidad.png){width="90%" fig-align="center"} 
+
 De acuerdo con los datos demográficos, la población con discapacidad en México muestra una distribución significativa en los grupos de edad avanzada, con un 50.1% correspondiente a personas de 60 años y más. Es notable que existe una tendencia hacia una mayor prevalencia en la población femenina a partir de los 45 años. Evidenciando que la distribución por género: 53.8% corresponde a mujeres y 47.0% a hombres.  
 
 
@@ -551,7 +552,128 @@ p
 
 ![](../Output/Piramide Población con discapacidad_Grupos de edad.png){width="90%" fig-align="center"} 
 
+La distribución por grupos etarios muestra que casi el 71% de la población con discapacidad se encuentran entre los 30 a los 84 años de edad.    
+
+
+#### Distribución de la población con discapacidad por estados 
+
+```{r, eval = FALSE, class.source = "fold-hide"}
+
+tabla <- data %>% 
+          mutate(Entidad = case_when(`Entidad Federativa` %in% "01 Aguascalientes" ~ "AGS",
+                                     `Entidad Federativa` %in% "02 Baja California" ~ "BC",
+                                     `Entidad Federativa` %in% "03 Baja California Sur" ~ "BCS",
+                                     `Entidad Federativa` %in% "04 Campeche" ~ "CAM",
+                                     `Entidad Federativa` %in% "05 Coahuila de Zaragoza" ~ "COAH",
+                                     `Entidad Federativa` %in% "06 Colima" ~ "COL",
+                                     `Entidad Federativa` %in% "07 Chiapas" ~ "CHIS",
+                                     `Entidad Federativa` %in% "08 Chihuahua" ~ "CHIH",
+                                     `Entidad Federativa` %in% "09 Ciudad de México" ~ "CDMX",
+                                     `Entidad Federativa` %in% "10 Durango" ~ "DGO",
+                                     `Entidad Federativa` %in% "11 Guanajuato" ~ "GTO",
+                                     `Entidad Federativa` %in% "12 Guerrero" ~ "GRO",
+                                     `Entidad Federativa` %in% "13 Hidalgo" ~ "HGO",
+                                     `Entidad Federativa` %in% "14 Jalisco" ~ "JAL",
+                                     `Entidad Federativa` %in% "15 México" ~ "MEX",
+                                     `Entidad Federativa` %in% "16 Michoacán de Ocampo" ~ "MICH",
+                                     `Entidad Federativa` %in% "17 Morelos" ~ "MOR",
+                                     `Entidad Federativa` %in% "18 Nayarit" ~ "NAY",
+                                     `Entidad Federativa` %in% "19 Nuevo León" ~ "NL",
+                                     `Entidad Federativa` %in% "20 Oaxaca" ~ "OAX",
+                                     `Entidad Federativa` %in% "21 Puebla" ~ "PUE",
+                                     `Entidad Federativa` %in% "22 Querétaro" ~ "QRO",
+                                     `Entidad Federativa` %in% "23 Quintana Roo" ~ "QROO",
+                                     `Entidad Federativa` %in% "24 San Luis Potosí" ~ "SLP",
+                                     `Entidad Federativa` %in% "25 Sinaloa" ~ "SIN",
+                                     `Entidad Federativa` %in% "26 Sonora" ~ "SON",
+                                     `Entidad Federativa` %in% "27 Tabasco" ~ "TAB",
+                                     `Entidad Federativa` %in% "28 Tamaulipas" ~ "TAM",
+                                     `Entidad Federativa` %in% "29 Tlaxcala" ~ "TLAX",
+                                     `Entidad Federativa` %in% "30 Veracruz de Ignacio de la Llave" ~ "VER",
+                                     `Entidad Federativa` %in% "31 Yucatán" ~ "YUC",
+                                     `Entidad Federativa` %in% "32 Zacatecas" ~ "ZAC")) %>%
+           filter(Sexo %in% "Total") %>%
+            filter(`Entidad Federativa` %nin% "Estados Unidos Mexicanos") %>%
+             filter(`Grupos quinquenales` %nin% c("Total", "No especificado")) %>%
+              group_by(`Entidad`) %>% 
+               summarise(Pob_Total = sum(`Con discapacidad (Total)`)) %>% 
+                 arrange(Pob_Total) %>%
+                  mutate(radius = circleProgressiveLayout(.$Pob_Total, sizetype='area')) 
+
+library(packcircles)
+
+packing <- circleProgressiveLayout(tabla$Pob_Total, sizetype='area')
+dat.gg <- circleLayoutVertices(packing, npoints=50)  
+
+
+p <- ggplot() + 
+     geom_polygon(data = dat.gg, 
+                  aes(x, y, group = id, fill = as.factor(id)), 
+                  colour = "black",  
+                  alpha = 1) +
+     geom_text(data = tabla, 
+                aes(x = radius$x, 
+                    y = radius$y, 
+                    size = Pob_Total, 
+                    label = paste(Entidad, "\n", format(Pob_Total, big.mark = " "))),
+                family = "Montserrat") +
+       theme_void() + 
+        theme(plot.title = element_text(size = 22, hjust = 0, family = "Montserrat SemiBold", face = "bold"),
+              plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+              plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+              axis.text = element_blank(), 
+              axis.title = element_blank(), 
+              legend.key.size = unit(0.5, "cm"),
+              legend.text = element_text(size = 12, family = "Montserrat"), 
+              legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+              legend.position = "none"
+               ) + 
+         scale_size_continuous(range = c(1,6)) +
+          scale_fill_viridis_d(option = "A", begin = 0.3, end = 1, direction = -1) + 
+           scale_color_viridis_d(option = "A", begin = 0.3, end = 1, direction = -1) + 
+            coord_equal()  + 
+             labs(title = "Población con discapacidad",
+                  subtitle = stringr::str_wrap("Distribución por estados", 50),
+                   x = "",
+                   y = "",
+                   caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+
+p
+#path = "Output/Población con discapacidad_Estados.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+
+
+<p align="center">
+  <img src="../Output/Población con discapacidad_Estados_Page_1.png" alt="Población con discapacidad" width="75%">
+</p>
+
+Las entidades que concentran mayor población con discapacidad son México, Ciudad de México, Veracruz y Jalisco.  
+
+
 ## Referencias  
 
 Instituto Nacional de Estadística y Geografía [INEGI], 2017, La discapacidad en México,
-datos al 2014. Versión 2017, disponible en https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825094409.pdf
+datos al 2014. Versión 2017, disponible en https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825094409.pdf  
+
+Instituto Nacional de Estadística y Geografía. (2020). Censo de Población y Vivienda 2020: Base de datos y resultados definitivos. INEGI. https://www.inegi.org.mx/programas/ccpv/2020/  
+
+
+Librerias que se usaron en el documento
+
+```{r, echo = FALSE, eval = TRUE}
+sesion_info <- devtools::session_info()
+require(knitr)
+require(kableExtra)
+kable(dplyr::select(tibble::as_tibble(sesion_info$packages %>% dplyr::filter(attached == TRUE)),
+                    c(package, loadedversion, source))) %>%
+ kable_styling(font_size = 10, 
+               bootstrap_options = c("condensed", "responsive", "bordered")) %>%
+  kable_classic(full_width = TRUE, html_font = "montserrat") %>% 
+   scroll_box(width = "100%", height = "400px") %>%  
+    gsub("font-size: initial !important;", "font-size: 10pt !important;", .)
+```
+
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a><br />This work by [**Diana Villasana Ocampo**]{xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"} is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
