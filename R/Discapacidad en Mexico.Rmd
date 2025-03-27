@@ -208,37 +208,37 @@ Estas preguntas permiten **comparaciones internacionales** y proporcionan una me
 Se cargan las bases de datos de discapacidad, obtenido del los tabulados básicos del Censo de Población y Vivienda 2020 [(Enlace)](https://www.inegi.org.mx/programas/ccpv/2020/#tabulados)  
 
 ```{r}
-data <- read.xlsx("Bases/cpv2020_b_eum_06_discapacidad.xlsx", 
-                  sheet = "02", 
-                  colNames = FALSE,
-                  startRow = 10, 
-                  skipEmptyRows = TRUE)
+mydata <- read.xlsx("Bases/cpv2020_b_eum_06_discapacidad.xlsx", 
+                    sheet = "02", 
+                    colNames = FALSE,
+                    startRow = 10, 
+                    skipEmptyRows = TRUE)
 # Columnas
-colnames(data) <- c("Entidad Federativa", "Sexo", "Grupos quinquenales", "Población Total", 
-                    "Población con discapacidad, limitación o con algún problema o condición mental",
-                    "Con discapacidad (Total)",
-                    "Con discapacidad (Ver aun usando lentes)",
-                    "Con discapacidad (Oír aun usando aparato auditivo)",
-                    "Con discapacidad (Caminar, subir o bajar)",
-                    "Con discapacidad (Recordar o concentranrse)",
-                    "Con discapacidad (Bañarse, vestirse o comer)",
-                    "Con discapacidad (Hablar o comunicarse)",
-                    "Con limitación (Total)",
-                    "Con limitación (Ver aun usando lentes)",
-                    "Con limitación (Oír aun usando aparato auditivo)",
-                    "Con limitación (Caminar, subir o bajar)",
-                    "Con limitación (Recordar o concentranrse)",
-                    "Con limitación (Bañarse, vestirse o comer)",
-                    "Con limitación (Hablar o comunicarse)",
-                    "Población con algún problema o condición mental",
-                    "Sin discapacidad, limitación, problema o condición mental",
-                    "No especificado")
+colnames(mydata) <- c("Entidad Federativa", "Sexo", "Grupos quinquenales", "Población Total", 
+                      "Población con discapacidad, limitación o con algún problema o condición mental",
+                      "Con discapacidad (Total)",
+                      "Con discapacidad (Ver aun usando lentes)",
+                      "Con discapacidad (Oír aun usando aparato auditivo)",
+                      "Con discapacidad (Caminar, subir o bajar)",
+                      "Con discapacidad (Recordar o concentranrse)",
+                      "Con discapacidad (Bañarse, vestirse o comer)",
+                      "Con discapacidad (Hablar o comunicarse)",
+                      "Con limitación (Total)",
+                      "Con limitación (Ver aun usando lentes)",
+                      "Con limitación (Oír aun usando aparato auditivo)",
+                      "Con limitación (Caminar, subir o bajar)",
+                      "Con limitación (Recordar o concentranrse)",
+                      "Con limitación (Bañarse, vestirse o comer)",
+                      "Con limitación (Hablar o comunicarse)",
+                      "Población con algún problema o condición mental",
+                      "Sin discapacidad, limitación, problema o condición mental",
+                      "No especificado")
 ```
 
 Se filtra la variable `Entidad Federativa` para conservar únicamente las filas donde su valor sea `Estados Unidos Mexicanos`.
 
 ```{r}
-data <- data %>% 
+data <- mydata %>% 
          filter(`Entidad Federativa` %in% "Estados Unidos Mexicanos")
 ```
 
@@ -558,8 +558,9 @@ La distribución por grupos etarios muestra que casi el 71% de la población con
 #### Distribución de la población con discapacidad por estados 
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
+require(packcircles)
 
-tabla <- data %>% 
+tabla <- mydata %>% 
           mutate(Entidad = case_when(`Entidad Federativa` %in% "01 Aguascalientes" ~ "AGS",
                                      `Entidad Federativa` %in% "02 Baja California" ~ "BC",
                                      `Entidad Federativa` %in% "03 Baja California Sur" ~ "BCS",
@@ -599,8 +600,7 @@ tabla <- data %>%
                summarise(Pob_Total = sum(`Con discapacidad (Total)`)) %>% 
                  arrange(Pob_Total) %>%
                   mutate(radius = circleProgressiveLayout(.$Pob_Total, sizetype='area')) 
-
-library(packcircles)
+color_text <- c(rep("black", 18), rep("white", 14))
 
 packing <- circleProgressiveLayout(tabla$Pob_Total, sizetype='area')
 dat.gg <- circleLayoutVertices(packing, npoints=50)  
@@ -616,6 +616,7 @@ p <- ggplot() +
                     y = radius$y, 
                     size = Pob_Total, 
                     label = paste(Entidad, "\n", format(Pob_Total, big.mark = " "))),
+                color = color_text,
                 family = "Montserrat") +
        theme_void() + 
         theme(plot.title = element_text(size = 22, hjust = 0, family = "Montserrat SemiBold", face = "bold"),
@@ -638,15 +639,14 @@ p <- ggplot() +
                    y = "",
                    caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
 
-p
+require(plotly)
+plotly::ggplotly(p)
 #path = "Output/Población con discapacidad_Estados.pdf"
 #ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 
-
-
 <p align="center">
-  <img src="../Output/Población con discapacidad_Estados_Page_1.png" alt="Población con discapacidad" width="75%">
+  <img src="../Output/Población con discapacidad_Estados_Page_1.png" alt="Población con discapacidad" width="80%">
 </p>
 
 Las entidades que concentran mayor población con discapacidad son México, Ciudad de México, Veracruz y Jalisco.  
