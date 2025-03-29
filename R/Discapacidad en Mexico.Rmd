@@ -123,6 +123,8 @@ require(tidyverse)
 require(tibble)
 require(viridis)
 require(janitor)
+library(plotly)
+library(packcircles)
 ```
 
 ```{r, echo = FALSE, results=FALSE}
@@ -501,7 +503,7 @@ De acuerdo al Censo de Población y Vivienda, un **total de 6 179 890 personas**
 
 **Elaboración propia**   
 
-#### Distribución de la población con discapacidad por grupos de edad   
+## Distribución de la población con discapacidad por grupos de edad   
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 tabla <- data %>% 
@@ -555,7 +557,7 @@ p
 La distribución por grupos etarios muestra que casi el 71% de la población con discapacidad se encuentran entre los 30 a los 84 años de edad.    
 
 
-#### Distribución de la población con discapacidad por estados 
+### Distribución de la población con discapacidad por estados 
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 require(packcircles)
@@ -648,6 +650,96 @@ plotly::ggplotly(p)
 <p align="center">
   <img src="../Output/Población con discapacidad_Estados_Page_1.png" alt="Población con discapacidad" width="80%">
 </p>
+
+### Plotly
+
+```{r, class.source = "fold-hide"}
+# Procesamiento de datos
+tabla <- mydata %>% 
+          mutate(Entidad = case_when(`Entidad Federativa` %in% "01 Aguascalientes" ~ "AGS",
+                                     `Entidad Federativa` %in% "02 Baja California" ~ "BC",
+                                     `Entidad Federativa` %in% "03 Baja California Sur" ~ "BCS",
+                                     `Entidad Federativa` %in% "04 Campeche" ~ "CAM",
+                                     `Entidad Federativa` %in% "05 Coahuila de Zaragoza" ~ "COAH",
+                                     `Entidad Federativa` %in% "06 Colima" ~ "COL",
+                                     `Entidad Federativa` %in% "07 Chiapas" ~ "CHIS",
+                                     `Entidad Federativa` %in% "08 Chihuahua" ~ "CHIH",
+                                     `Entidad Federativa` %in% "09 Ciudad de México" ~ "CDMX",
+                                     `Entidad Federativa` %in% "10 Durango" ~ "DGO",
+                                     `Entidad Federativa` %in% "11 Guanajuato" ~ "GTO",
+                                     `Entidad Federativa` %in% "12 Guerrero" ~ "GRO",
+                                     `Entidad Federativa` %in% "13 Hidalgo" ~ "HGO",
+                                     `Entidad Federativa` %in% "14 Jalisco" ~ "JAL",
+                                     `Entidad Federativa` %in% "15 México" ~ "MEX",
+                                     `Entidad Federativa` %in% "16 Michoacán de Ocampo" ~ "MICH",
+                                     `Entidad Federativa` %in% "17 Morelos" ~ "MOR",
+                                     `Entidad Federativa` %in% "18 Nayarit" ~ "NAY",
+                                     `Entidad Federativa` %in% "19 Nuevo León" ~ "NL",
+                                     `Entidad Federativa` %in% "20 Oaxaca" ~ "OAX",
+                                     `Entidad Federativa` %in% "21 Puebla" ~ "PUE",
+                                     `Entidad Federativa` %in% "22 Querétaro" ~ "QRO",
+                                     `Entidad Federativa` %in% "23 Quintana Roo" ~ "QROO",
+                                     `Entidad Federativa` %in% "24 San Luis Potosí" ~ "SLP",
+                                     `Entidad Federativa` %in% "25 Sinaloa" ~ "SIN",
+                                     `Entidad Federativa` %in% "26 Sonora" ~ "SON",
+                                     `Entidad Federativa` %in% "27 Tabasco" ~ "TAB",
+                                     `Entidad Federativa` %in% "28 Tamaulipas" ~ "TAM",
+                                     `Entidad Federativa` %in% "29 Tlaxcala" ~ "TLAX",
+                                     `Entidad Federativa` %in% "30 Veracruz de Ignacio de la Llave" ~ "VER",
+                                     `Entidad Federativa` %in% "31 Yucatán" ~ "YUC",
+                                     `Entidad Federativa` %in% "32 Zacatecas" ~ "ZAC")) %>%
+           filter(Sexo %in% "Total") %>%
+            filter(`Entidad Federativa` %nin% "Estados Unidos Mexicanos") %>%
+             filter(`Grupos quinquenales` %nin% c("Total", "No especificado")) %>%
+              group_by(`Entidad`) %>% 
+               summarise(Pob_Total = sum(`Con discapacidad (Total)`)) %>% 
+                 arrange(Pob_Total) 
+
+percent <- tabla %>% 
+            adorn_percentages("col") %>%
+             mutate(percent = .$Pob_Total *100)
+
+# Asignar posiciones de burbujas
+packing <- circleProgressiveLayout(tabla$Pob_Total, sizetype = 'area')
+tabla <- cbind(tabla, packing)
+
+dat.gg <- circleLayoutVertices(packing, npoints = 50) 
+```
+
+
+```{r class.source = "fold-hide"}
+# Gráfico en Plotly
+fig <- plot_ly() %>%
+        add_polygons(
+                     data = dat.gg,
+                     x = ~x, 
+                     y = ~y,
+                     split = ~id,
+                     fillcolor = ~viridis(32, option = "A", begin = 0.3, end = 0.8, direction = -1)[id],
+                     line = list(color = 'black')
+                    ) %>%
+         add_trace(
+                   data = tabla,
+                   x = ~x, 
+                   y = ~y,
+                   marker = list(color = viridis(32, option = "A", begin = 0.3, end = 0.8, direction = -1)),
+                   type = 'scatter',
+                   hoverinfo = 'text',
+                   mode="markers+text",
+                   text = ~paste(Entidad, "\n", format(Pob_Total, big.mark=",")),
+                   textfont = list(family = "Montserrat Medium", size = 13, color = c(rep("black", 18), rep("white", 14))),
+                   hovertemplate = ~paste0(Entidad, "\n", format(Pob_Total, big.mark=","), "\n", round(percent$percent, 2), "%")
+                  ) %>%
+          layout(
+            title = "Población con discapacidad por estado",
+            showlegend = FALSE,
+            xaxis = list(title = '', showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+            yaxis = list(title = '', showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
+          )
+
+fig
+```
+
 
 Las entidades que concentran mayor población con discapacidad son México, Ciudad de México, Veracruz y Jalisco.  
 
