@@ -557,7 +557,7 @@ p
 La distribución por grupos etarios muestra que casi el 71% de la población con discapacidad se encuentran entre los 30 a los 84 años de edad.    
 
 
-### Distribución de la población con discapacidad por estados 
+## Distribución de la población con discapacidad por estados 
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 require(packcircles)
