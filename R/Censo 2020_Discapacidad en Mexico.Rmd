@@ -150,7 +150,7 @@ De acuerdo con el Instituto Nacional de Estadística y Geografía (INEGI), basá
 ### **Afiliación a Servicios de Salud**  
 
 
-El artículo 25 de la Convención sobre los Derechos de las Personas con Discapacidad señala el derecho a contar con servicios de salud[^3]. Según el Informe de los Objetivos de Desarrollo Sostenible (ODS) 2020[^4], a nivel mundial no se está alcanzando la meta sobre la cobertura sanitaria universal. El Programa Sectorial de Salud 2019-2024 tiene como objetivo prioritario el acceso efectivo, universal y gratuito a la salud para las personas que no cuentan con afiliación a las instituciones de seguridad social. En México, 76% (5 426 553) de las personas con discapacidad y/o problema o condición mental cuenta con afiliación a servicios de salud, porcentaje mayor a 74% (87 147 740) que tiene la población sin discapacidad.
+El artículo 25 de la Convención sobre los Derechos de las Personas con Discapacidad señala el derecho a contar con servicios de salud[^3]. Según el Informe de los Objetivos de Desarrollo Sostenible (ODS) 2020[^4], a nivel mundial no se está alcanzando la meta sobre la cobertura sanitaria universal. El Programa Sectorial de Salud 2019-2024 tiene como objetivo prioritario el acceso efectivo, universal y gratuito a la salud para las personas que no cuentan con afiliación a las instituciones de seguridad social. En México, **76% (5 426 553) de las personas con discapacidad y/o problema o condición mental cuenta con afiliación a servicios de salud**, porcentaje mayor a **74% (87 147 740) que tiene la población sin discapacidad**.
 
 [^3]:Organización Mundial de la Salud. (2020). Discapacidad y salud. https://www.who.int/es/news-room/fact-sheets/detail/disabilityand-health 
 
@@ -179,8 +179,10 @@ tabla %>%
   tab_header(title = "Población con discapacidad y/o problema o condición mental",
              subtitle = "Censo de Población y Vivienda 2020") %>%
    tab_footnote(footnote = "Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico") %>%
-     fmt_integer(columns = names(tabla)[3:6], 
+     fmt_integer(columns = names(tabla)[3:7], 
                  sep_mark = " ") %>%
+      fmt_number(columns = names(tabla)[8], 
+                  decimals = 2) %>%
      tab_options(heading.title.font.size = 14, 
                  heading.subtitle.font.size = 12,
                  table.font.names = "Century Gothic",
@@ -206,8 +208,13 @@ El **Instituto Nacional de Estadística, Geografía e Informática (`INEGI`)** t
 
 Este producto integra información vectorial, tablas de atributos y catálogos. Muestra la división geoestadística del territorio nacional en sucesivos niveles del territorio. Esta división está dada por los llamados **límites estadísticos**, que pueden coincidir con los límites político-administrativos oficiales, los cuales tienen sustento legal.
 
-```{r, class.source = "fold-show", eval = FALSE}
+```{r, class.source = "fold-hide", eval = FALSE}
+# Paquetes 
+require(ggplot2)
+require(tibble)
+require(sf)
 require(rgdal)
+
 shape_estados <- readOGR(dsn = "D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
                           layer = "00ent",
                            encoding = "UTF-8",
@@ -216,16 +223,197 @@ shape_estados <- readOGR(dsn = "D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos",
 shape_estados@data <- shape_estados@data %>%
                        rename("CVE_GEO" = "CVEGEO")
 
-layer_estados <- merge(shape_estados,
-                        tabla %>% dplyr::select(-`Entidad Federativa`), 
-                         by = "CVE_GEO")
-
 require(sf)
 tbl_estados <- as_tibble(st_as_sf(shape_estados)) %>%
                 merge(., tabla %>% select(-`Entidad Federativa`),
                       by = "CVE_GEO") %>% 
-                 
+                 mutate(Categorias = cut(`Tasa de Prevalencia`, 
+                                         breaks = quantile(`Tasa de Prevalencia`, 
+                                                           probs = seq(0, 1, by = 0.2), 
+                                                           na.rm = TRUE
+                                                           ), 
+                                         include.lowest = TRUE,
+                                         labels= c("4.34 a 5.05", "5.05 a 5.54", "5.54 a 6.16", "6.16 a 6.41", "6.41 a 7.22")))
+#Paleta de colores
+paleta <- rev(colorRampPalette(pals::ocean.matter(10))(5))
+
+p <- ggplot(data = tbl_estados) +  
+      geom_sf(mapping = aes(geometry = geometry, 
+                             fill = Categorias),
+               color = "#BDBDBD", 
+                size = 0.1)  + 
+       theme_transparent() + 
+        theme(plot.title = element_text(size = 21, hjust = 0.15, family = "Montserrat", face = "bold"),
+              plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat Medium"),
+              plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+              axis.text = element_blank(),
+              axis.title = element_blank(),
+              axis.ticks = element_blank(),
+              legend.key.size = unit(0.5, "cm"),
+              legend.text = element_text(size = 10, family = "Montserrat"), 
+              legend.title = element_text(size = 12, hjust = 0.5, family = "Montserrat", face = "bold"),
+              legend.position = c(0.8, 0.7)) + 
+          scale_fill_manual(values = paleta) + 
+           scale_color_manual(values = paleta) + 
+            guides(color = guide_legend(override.aes = list(fill = rev(usecol(pal = pal_petrol, n = 5))))) +
+      labs(title = "Prevalencia de la población con discapacidad y/o problema o condición mental por entidad federativa, 2020",
+           subtitle = "(en porcentajes)",
+            fill = "",
+             caption = expression(paste("Fuentes: Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020")))
+
+#path = "Output/Prevalencia de discapacidad por estados.pdf"
+#ggexport (p, width = 8, height = 5, res = 400, filename = path)
+
+p
+```
+
+![](../Output/Prevalencia de discapacidad por estados.png){width="90%" fig-align="center"}
+
+### Estructura de la población por condición de discapacidad y/o problema o condición mental  
+
+Los datos demográficos de 2020 revelan una distribución significativa entre la población sin discapacidad: **30.8 millones (26%)** corresponden a población infantil (`0 a 14 años`), **30.3 millones (26%)** a población joven (`15 a 29 años`), **45.4 millones (38%)** a población adulta y **11.9 millones (10%)** a adultos mayores (`60 años y más`).  
+
+En contraste, la distribución demográfica de personas con discapacidad y/o condición mental presenta un patrón diferente: **899 mil (13%)** corresponden a población infantil, **869 mil (12%)** a población joven, **2.2 millones (31%)** a población adulta y **3.2 millones (45%)** a adultos mayores. Esta distribución evidencia la correlación entre el avance de la edad y la probabilidad de experimentar limitaciones significativas en actividades cotidianas básicas y/o presentar alguna condición mental.   
+
+
+El análisis de la distribución por género revela patrones demográficos distintivos: la población sin discapacidad presenta una distribución equilibrada, con mujeres representando el **51% (60,627,239)** y hombres el **49% (57,858,476)**. En cuanto a la población con discapacidad y/o condición mental, se observa una ligera preponderancia femenina, constituyendo el **52% (3,734,665)** frente al **48% (3,433,513)** de representación masculina.  
+
+
+```{r}
+require(Hmisc)
+Pob.Total <- read.xlsx(paste0(here::here(), "/Bases/Piramide de población 2020.xlsx"), sheet = "Pob.Total") %>% 
+              filter(Grupos %nin% c("Total", "No especificado"))
+
+Pob.Discapacidad <- read.xlsx(paste0(here::here(), "/Bases/Piramide de población 2020.xlsx"), sheet = "Pob.Discapacidad") %>% 
+                     filter(Grupos %nin% c("Total", "No especificado"))
 ```
 
 
+
+```{r, echo = FALSE}
+require(gt)
+
+Pob.Discapacidad %>% 
+ gt() %>%
+  tab_header(title = "Población con discapacidad y/o problema o condición mental",
+             subtitle = "Censo de Población y Vivienda 2020") %>%
+   tab_footnote(footnote = "Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico") %>%
+     fmt_integer(columns = names(Pob.Discapacidad)[2:4], 
+                 sep_mark = " ") %>%
+      fmt_number(columns = names(Pob.Discapacidad)[5:6], 
+                  decimals = 2) %>%
+     tab_options(heading.title.font.size = 14, 
+                 heading.subtitle.font.size = 12,
+                 table.font.names = "Century Gothic",
+                 table.font.size = 10,
+                 data_row.padding = px(1)) %>%
+      tab_style(style = list(cell_text(align = "left",
+                                       weight = 'bold')),
+                locations = list(cells_title(groups = c("title")))) %>%
+       tab_style(style = list(cell_text(align = "left")),
+                 locations = list(cells_title(groups = c("subtitle")))) %>%
+        cols_width(starts_with("Entidad Federativa") ~ px(200),
+                   everything() ~ px(100)) %>%
+         as_raw_html() 
+```
+
+
+
+```{r, class.source = "fold-hide", eval = FALSE}
+require(ggplot2)
+require(ggpubr)
+require(Hmisc)
+require(tidyverse)
+require(tibble)
+require(data.table)
+require(ggpattern)
+
+levels = c("De 0 a 4 años", "De 5 a 9 años", "De 10 a 14 años", "De 15 a 19 años", "De 20 a 24 años", "De 25 a 29 años",
+           "De 30 a 34 años", "De 35 a 39 años", "De 40 a 44 años", "De 45 a 49 años", "De 50 a 54 años", "De 55 a 59 años",
+           "De 60 a 64 años", "De 65 a 69 años", "De 70 a 74 años", "De 75 a 79 años", "De 80 a 84 años", "85 años y más")
+
+tabla.Población <- Pob.Total %>% 
+                    select(Grupos, "%H", "%M") %>%
+                      melt() %>% 
+                       mutate(percent = ifelse(variable %in% "%H", -1 * .$value, .$value)) %>% 
+                        mutate(Grupos = factor(.$Grupos, levels = levels))
+
+tabla.Discapacidad <- Pob.Discapacidad %>% 
+                        select(Grupos, "%H", "%M") %>%
+                          melt() %>% 
+                           mutate(percent = ifelse(variable %in% "%H", -1 * .$value, .$value)) %>% 
+                            mutate(Grupos = factor(.$Grupos, levels = levels))
+
+p <- ggplot() + 
+        geom_col_pattern(data = tabla.Discapacidad,
+                aes(x = percent,
+                    y = Grupos),
+                    color = "#FF5733",
+                    pattern_fill = "#FF5733",
+                    pattern_color = "transparent",
+                    pattern_angle = 115,
+                    pattern_density = 0.01,
+                    pattern_spacing = 0.005,
+                    fill = "transparent",
+                    alpha = 0.5,
+                    size = 0.5) + 
+        geom_label(data = tabla.Discapacidad,
+                   aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                       y = Grupos,
+                       label = round(abs(value), 1)),
+                   fill = "white",
+                   color = "#cd2702",
+                   alpha = 0.3, 
+                   family = "Montserrat Medium",
+                   label.size = 0) + 
+         geom_col_pattern(data = tabla.Población,
+                aes(x = percent,
+                    y = Grupos),
+                    color = "#900C3F",
+                    pattern_fill = "#900C3F",
+                    pattern_color = "transparent",
+                    pattern_angle = 45,
+                    pattern_density = 0.01,
+                    pattern_spacing = 0.03,
+                    
+                    fill = "transparent",
+                    alpha = 0.3,
+                    size = 0.5) + 
+        geom_label(data = tabla.Población,
+                   aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                       y = Grupos,
+                       label = round(abs(value), 1)),
+                   fill = "white",
+                   color = "#900C3F",
+                   alpha = 0.5, 
+                   family = "Montserrat Medium",
+                   label.size = 0) + 
+         theme_transparent() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+               ) + 
+         #  scale_fill_manual(values = paleta) + 
+          #  scale_color_manual(values = paleta) +
+             labs(title = "Estructura de la población con discapacidad",
+                  subtitle = stringr::str_wrap("Población con discapacidad", 50),
+                  x = "Porcentaje de población",
+                  fill = "Sexo",
+                  color = "Sexo",
+                  caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+  
+p
+
+#path = "Output/Piramide Población Total y Discapacidad.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+
+![](../Output/Piramide Población Total y Discapacidad.png){width="90%" fig-align="center"}
 
