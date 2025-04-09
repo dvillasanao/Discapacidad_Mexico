@@ -357,15 +357,6 @@ p <- ggplot() +
                     fill = "transparent",
                     alpha = 0.5,
                     size = 0.5) + 
-        geom_label(data = tabla.Discapacidad,
-                   aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
-                       y = Grupos,
-                       label = round(abs(value), 1)),
-                   fill = "white",
-                   color = "#cd2702",
-                   alpha = 0.3, 
-                   family = "Montserrat Medium",
-                   label.size = 0) + 
          geom_col_pattern(data = tabla.Población,
                 aes(x = percent,
                     y = Grupos),
@@ -379,6 +370,15 @@ p <- ggplot() +
                     fill = "transparent",
                     alpha = 0.3,
                     size = 0.5) + 
+        geom_label(data = tabla.Discapacidad,
+                   aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                       y = Grupos,
+                       label = round(abs(value), 1)),
+                   fill = "white",
+                   color = "#cd2702",
+                   alpha = 0.3, 
+                   family = "Montserrat Medium",
+                   label.size = 0) + 
         geom_label(data = tabla.Población,
                    aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
                        y = Grupos,
@@ -411,9 +411,41 @@ p <- ggplot() +
 p
 
 #path = "Output/Piramide Población Total y Discapacidad.pdf"
-#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+#path = "Output/Prueba.pdf"ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ```
 
 
 ![](../Output/Piramide Población Total y Discapacidad.png){width="90%" fig-align="center"}
+ 
+### Actividad con dificultad 
 
+La inclusión social efectiva de las personas con discapacidad requiere un marco integral fundamentado en los derechos humanos, complementado con medidas específicas y mensurables. Esta estrategia constituye el pilar fundamental para alcanzar una verdadera inclusión. Es necesario asegurar su participación activa y significativa en el desarrollo, implementación, monitoreo y evaluación de políticas y programas en los ámbitos político, económico y social, con el objetivo de reducir las disparidades existentes y promover una sociedad genuinamente inclusiva[^5].
+
+De acuerdo con datos estadísticos, de una población total de 7,168,178 personas con discapacidad y/o condición mental, aproximadamente 2.9 millones presentan dificultades en la movilidad (caminar, subir o bajar), mientras que 2.7 millones experimentan limitaciones visuales, incluso con el uso de lentes correctivos. La comunicación verbal representa el menor desafío reportado, afectando a 945,000 personas. Adicionalmente, 1.6 millones de individuos han declarado tener alguna condición de salud mental.
+
+[^5]:Noticias ONU. (2020). Una guía para respetar los derechos de las personas con discapacidad durante la pandemia de coronavirus. https://news.un.org/es/story/2020/04/1473702
+
+![](../Output/Población según actividad cotidiana.png){width="100%" fig-align="center"}
+
+
+### Educación  
+
+La Organización de las Naciones Unidas para la Educación, la Ciencia y la Cultura (UNESCO)[^6] enfatiza la necesidad fundamental de implementar políticas educativas inclusivas para garantizar oportunidades equitativas de aprendizaje. Las estadísticas revelan una preocupante brecha educativa: entre la población con discapacidad y/o condición mental de 15 años o más (6,269,277 personas), un significativo 19% (1.2 millones) carece de habilidades básicas de lectoescritura, una cifra que cuadruplica el 4% (3.3 millones) observado en la población sin discapacidad[^7].
+
+El análisis por género muestra disparidades adicionales: mientras que el 21% (707 mil) de las mujeres con discapacidad y/o condición mental no pueden leer ni escribir, esta proporción se reduce al 17% (497 mil) en el caso de los hombres en situaciones similares.
+
+[^6]: Organización de las Naciones Unidas para la Educación, la Ciencia y la Cultura. (2017). Guía para asegurar la inclusión y la equidad en la educación. https://unesdoc.unesco.org/ark:/48223/pf0000259592/PDF/259592spa.pdf.multi
+
+[^7]:Según el Censo de Población y Vivienda 2020, una analfabeta es la persona de 15 años y más de edad que no sabe leer ni escribir un recado. Instituto Nacional de Estadística y Geografía. (s.f.). Glosario. https://www.inegi.org.mx/app/glosario/default.html?p=censo2020_A
+
+Pineda, M. y Chapa, B. (2018). Exclusión de las personas analfabetas en la vinculación laboral. Revista Mexicana de Sociología 80, núm.4. http://mexicanadesociologia.unam.mx/index.php/v80n4/296-v80n4a2
+
+
+
+### TRABAJO
+
+La Organización Internacional del Trabajo (OIT) establece la necesidad de implementar una estrategia dual para la inclusión laboral de personas con discapacidad. Esta estrategia comprende, por una parte, programas específicamente diseñados para abordar barreras particulares, y por otra, medidas que aseguren su plena participación en servicios esenciales, incluyendo capacitación profesional, oportunidades laborales, protección social e iniciativas contra la pobreza[^8].
+
+En cuanto a la Población Económicamente Activa (PEA), definida como el conjunto de personas disponibles para la producción de bienes y servicios económicos, los datos de 2020 revelan una disparidad significativa. La tasa de participación económica de individuos con discapacidad y/o condición mental de 15 años o más alcanza el 38% (2.4 millones), contrastando notablemente con el 67% (59 millones) observado en la población sin discapacidad.
+
+[^8]:Organización Internacional del Trabajo.(2021). Discapacidad y trabajo. https://www.ilo.org/global/topics/disability-and-work/WCMS_475652/lang--es/index.htm
