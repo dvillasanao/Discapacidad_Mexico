@@ -440,12 +440,76 @@ El análisis por género muestra disparidades adicionales: mientras que el 21% (
 
 Pineda, M. y Chapa, B. (2018). Exclusión de las personas analfabetas en la vinculación laboral. Revista Mexicana de Sociología 80, núm.4. http://mexicanadesociologia.unam.mx/index.php/v80n4/296-v80n4a2
 
+![](../Output/Estructura por sexo.png){width="100%" fig-align="center"}
+
+### Trabajo
+
+La Organización Internacional del Trabajo (`OIT`) establece la necesidad de implementar una estrategia dual para la inclusión laboral de personas con discapacidad. Esta estrategia comprende, por una parte, programas específicamente diseñados para abordar barreras particulares, y por otra, medidas que aseguren su plena participación en servicios esenciales, incluyendo capacitación profesional, oportunidades laborales, protección social e iniciativas contra la pobreza[^8].
+
+En cuanto a la Población Económicamente Activa (`PEA`), definida como el conjunto de personas disponibles para la producción de bienes y servicios económicos, los datos de 2020 revelan una disparidad significativa. La tasa de participación económica de individuos con discapacidad y/o condición mental de 15 años o más alcanza el 38% (2.4 millones), contrastando notablemente con el 67% (59 millones) observado en la población sin discapacidad.
+
+[^8]:Organización Internacional del Trabajo.(2021). Discapacidad y trabajo. https://www.ilo.org/global/topics/disability-and-work/WCMS_475652/lang--es/index.htm   
+
+```{r, eval = FALSE, class.source = "fold-hide"}
+
+PEA <- read.xlsx(paste0(here::here(), "/Bases/Población economicamente activa.xlsx")) 
+
+p <- PEA %>% 
+     # filter(Condicion %in% "Con discapacidad") %>% 
+       ggplot(aes(x = Tasa, y = Sexo, color = Sexo, fill = Sexo, group = Condicion)) + 
+        geom_col() + 
+         geom_text(aes(label = Tasa),
+                   hjust = -0.5, 
+                   fontface = "bold", 
+                   family = "Montserrat Medium") + 
+          theme_transparent() + 
+           theme(plot.title = element_text(size = 22, hjust = 0, family = "Montserrat SemiBold", face = "bold"),
+                 plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                 plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                 axis.text = element_text(family = "Montserrat"), 
+                 axis.title = element_text(family = "Montserrat", size = 15), 
+                 legend.key.size = unit(0.5, "cm"),
+                 legend.text = element_text(size = 12, family = "Montserrat"), 
+                 legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                 legend.position = "none"
+                 ) + 
+           scale_fill_viridis_d(option = "A", begin = 0.3, end = 0.7) + 
+            scale_color_viridis_d(option = "A", begin = 0.3, end = 0.7) +
+              labs(title = "Población con discapacidad",
+                   subtitle = stringr::str_wrap("Distribución por grupos de edad", 50),
+                   x = "",
+                   y = "",
+                   caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico"))) + 
+              facet_grid(.~Condicion)
+p
+
+#path = "Output/PEA_2.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+![](../Output/Población economicamente activa.png){width="100%" fig-align="center"}
+
+## Referencias  
+
+INEGI. (2021). Comunicado de Prensa. Núm. 713/21 3 de diciembre de 2021 página 1/5 Estadísticas a Proposito del día internacional de las personas con discapacidad (Datos nacionales). Retrieved April 8, 2025, from https://www.inegi.org.mx/app/glosario/default.html?p=cpv2020#letraGloP
 
 
-### TRABAJO
+Librerias que se usaron en el documento
 
-La Organización Internacional del Trabajo (OIT) establece la necesidad de implementar una estrategia dual para la inclusión laboral de personas con discapacidad. Esta estrategia comprende, por una parte, programas específicamente diseñados para abordar barreras particulares, y por otra, medidas que aseguren su plena participación en servicios esenciales, incluyendo capacitación profesional, oportunidades laborales, protección social e iniciativas contra la pobreza[^8].
+```{r, echo = FALSE, eval = TRUE}
+sesion_info <- devtools::session_info()
+require(knitr)
+require(kableExtra)
+kable(dplyr::select(tibble::as_tibble(sesion_info$packages %>% dplyr::filter(attached == TRUE)),
+                    c(package, loadedversion, source))) %>%
+ kable_styling(font_size = 10, 
+               bootstrap_options = c("condensed", "responsive", "bordered")) %>%
+  kable_classic(full_width = TRUE, html_font = "montserrat") %>% 
+   scroll_box(width = "100%", height = "400px") %>%  
+    gsub("font-size: initial !important;", "font-size: 10pt !important;", .)
+```
 
-En cuanto a la Población Económicamente Activa (PEA), definida como el conjunto de personas disponibles para la producción de bienes y servicios económicos, los datos de 2020 revelan una disparidad significativa. La tasa de participación económica de individuos con discapacidad y/o condición mental de 15 años o más alcanza el 38% (2.4 millones), contrastando notablemente con el 67% (59 millones) observado en la población sin discapacidad.
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a><br />This work by [**Diana Villasana Ocampo**]{xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"} is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-[^8]:Organización Internacional del Trabajo.(2021). Discapacidad y trabajo. https://www.ilo.org/global/topics/disability-and-work/WCMS_475652/lang--es/index.htm
+
+
