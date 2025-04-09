@@ -1,0 +1,36 @@
+---
+title: "Población en situación de discapacidad"
+subtitle: "Censo de Población y Vivienda 2020"
+author: "Diana Villasana Ocampo"
+knit: (function(inputFile, encoding) {
+       rmarkdown::render(inputFile, encoding = encoding, output_dir = "../Output/")
+  })
+output:
+   html_document:
+      code_folding: hide
+      highlight: tango
+      theme: flatly
+      toc: true
+      toc_depth: 3
+      toc_float:
+        collapsed: yes
+---
+
+La Asamblea General de las Naciones Unidas estableció en 1992, mediante la resolución 47/3, el Día Internacional de las Personas con Discapacidad. Esta conmemoración tiene como objetivo fundamental promover la integración y los derechos de las personas con discapacidad en todos los ámbitos de la sociedad, fomentando su participación activa en el desarrollo socioeconómico y cultural[^1].  
+
+[^1]: Naciones Unidas. (s. f.). Día Internacional de las Personas con Discapacidad. 3 de diciembre. https://www.un.org/es/observances/day-ofpersons-with-disabilities
+
+De acuerdo con el Instituto Nacional de Estadística y Geografía (INEGI), basándose en el Censo de Población y Vivienda 2020, se han recopilado datos significativos sobre la población con discapacidad y/o condiciones mentales. Siguiendo la metodología establecida por el Grupo de Washington, se considera que una persona tiene discapacidad cuando experimenta limitaciones significativas en actividades fundamentales como: la movilidad (caminar, subir o bajar), la visión (incluso utilizando lentes), la audición (aun con aparatos auditivos), el autocuidado (bañarse, vestirse o alimentarse), las funciones cognitivas (memoria y concentración), y la comunicación. Esta definición abarca también a individuos con diversas condiciones mentales[^2].  
+
+[^2]: Estado alterado de salud mental (desde el nacimiento, como resultado de una enfermedad o de un trastorno mental y del comportamiento, lesión o proceso de envejecimiento), que dificulta a la persona a participar en actividades de la vida social comunitaria e interactuar con otras personas de manera adecuada para el contexto y su entorno social (por ejemplo, familia, escuela, trabajo, vecinos, etcétera). El estado alterado de salud mental incluye padecimientos como autismo, síndrome de Down, esquizofrenia, retraso mental (leve o grave), etcétera. Glosario https://www.inegi.org.mx/app/glosario/default.html?p=cpv2020#letraGloP  
+
+
+**Afiliación a Servicios de Salud**  
+
+
+El artículo 25 de la Convención sobre los Derechos de las Personas con Discapacidad señala el derecho a contar con servicios de salud[^3]. Según el Informe de los Objetivos de Desarrollo Sostenible (ODS) 2020[^4], a nivel mundial no se está alcanzando la meta sobre la cobertura sanitaria universal. El Programa Sectorial de Salud 2019-2024 tiene como objetivo prioritario el acceso efectivo, universal y gratuito a la salud para las personas que no cuentan con afiliación a las instituciones de seguridad social. En México, 76% (5 426 553) de las personas con discapacidad y/o problema o condición mental cuenta con afiliación a servicios de salud, porcentaje mayor a 74% (87 147 740) que tiene la población sin discapacidad.
+
+[^3]:Organización Mundial de la Salud. (2020). Discapacidad y salud. https://www.who.int/es/news-room/fact-sheets/detail/disabilityand-health 
+
+[^4]:Naciones Unidas. (2020). Informe de los Objetivos de Desarrollo Sostenible 2020. https://unstats.un.org/sdgs/report/2020/TheSustainable-Development-Goals-Report-2020_Spanish.pdf
+
