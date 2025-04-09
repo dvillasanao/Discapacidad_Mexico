@@ -16,6 +16,128 @@ output:
         collapsed: yes
 ---
 
+```{=html}
+<style type="text/css">
+body {
+text-align: justify;
+font-style: normal;
+font-family: "Montserrat";
+font-size: 12px
+}
+h1.title {
+  font-size: 40px;
+  color: #000D3B;
+}
+h1 {
+  color: #B6854D;
+}
+h2 {
+  color: #172984;
+}
+h3 {
+  color: #172984;
+}
+</style>
+```
+
+```{=html}
+<style>
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #1C3BA4
+}
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li>a:focus {
+    color: #ffffff;
+    background-color: #09C2BC
+}
+</style>
+```
+
+```{=html}
+<style>
+.tile1-text {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #0A6A87;
+    list-style: none;
+}
+.top1-tiles a:nth-of-type(1):hover, .top-tiles1 a:nth-of-type(1):focus{
+    color: #ffffff;
+    background: #0A6A87
+}
+</style>
+```
+
+```{=html}
+<style>
+.tile2-text {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #0A6CC8;
+    list-style: none;
+}
+.top2-tiles a:nth-of-type(1):hover, .top2-tiles a:nth-of-type(1):focus{
+    color: #ffffff;
+    background: #0A6CC8
+}
+</style>
+```
+
+```{=html}
+<style>
+.math {
+  font-size: 15px;
+  color: #1e42ab;
+}
+</style>
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE, 
+                      cache.lazy = FALSE, class.source = "fold-show")
+knitr::opts_knit$set(root.dir = here::here())
+setwd(here::here())
+```
+
+```{r,echo=FALSE, eval=FALSE}
+rm(list = ls())
+```
+
+```{r, echo = FALSE, results=FALSE}
+# Paquetes que se usaron en el documento 
+require(dplyr)          #A Grammar of Data Manipulation 
+require(RColorBrewer)
+require(knitr)
+require(kableExtra)
+require(openxlsx)
+require(readxl)
+require(rgdal)          #Para importar shapefiles. 
+require(unikn)          # Paleta de colores
+require(ggplot2)
+require(ggpubr)
+require(Hmisc)
+require(tidyverse)
+require(tibble)
+require(viridis)
+require(janitor)
+library(plotly)
+library(packcircles)
+```
+
+```{r, echo = FALSE, results=FALSE}
+# Se descargan las fuentes de la google fonts
+require(showtext)
+library(extrafont)
+# activar showtext
+windowsFonts()
+```
+
+## Personas con discapacidad (Datos a nivel nacional)  
+
 La Asamblea General de las Naciones Unidas estableció en 1992, mediante la resolución 47/3, el Día Internacional de las Personas con Discapacidad. Esta conmemoración tiene como objetivo fundamental promover la integración y los derechos de las personas con discapacidad en todos los ámbitos de la sociedad, fomentando su participación activa en el desarrollo socioeconómico y cultural[^1].  
 
 [^1]: Naciones Unidas. (s. f.). Día Internacional de las Personas con Discapacidad. 3 de diciembre. https://www.un.org/es/observances/day-ofpersons-with-disabilities
@@ -25,12 +147,85 @@ De acuerdo con el Instituto Nacional de Estadística y Geografía (INEGI), basá
 [^2]: Estado alterado de salud mental (desde el nacimiento, como resultado de una enfermedad o de un trastorno mental y del comportamiento, lesión o proceso de envejecimiento), que dificulta a la persona a participar en actividades de la vida social comunitaria e interactuar con otras personas de manera adecuada para el contexto y su entorno social (por ejemplo, familia, escuela, trabajo, vecinos, etcétera). El estado alterado de salud mental incluye padecimientos como autismo, síndrome de Down, esquizofrenia, retraso mental (leve o grave), etcétera. Glosario https://www.inegi.org.mx/app/glosario/default.html?p=cpv2020#letraGloP  
 
 
-**Afiliación a Servicios de Salud**  
+### **Afiliación a Servicios de Salud**  
 
 
 El artículo 25 de la Convención sobre los Derechos de las Personas con Discapacidad señala el derecho a contar con servicios de salud[^3]. Según el Informe de los Objetivos de Desarrollo Sostenible (ODS) 2020[^4], a nivel mundial no se está alcanzando la meta sobre la cobertura sanitaria universal. El Programa Sectorial de Salud 2019-2024 tiene como objetivo prioritario el acceso efectivo, universal y gratuito a la salud para las personas que no cuentan con afiliación a las instituciones de seguridad social. En México, 76% (5 426 553) de las personas con discapacidad y/o problema o condición mental cuenta con afiliación a servicios de salud, porcentaje mayor a 74% (87 147 740) que tiene la población sin discapacidad.
 
 [^3]:Organización Mundial de la Salud. (2020). Discapacidad y salud. https://www.who.int/es/news-room/fact-sheets/detail/disabilityand-health 
 
-[^4]:Naciones Unidas. (2020). Informe de los Objetivos de Desarrollo Sostenible 2020. https://unstats.un.org/sdgs/report/2020/TheSustainable-Development-Goals-Report-2020_Spanish.pdf
+[^4]:Naciones Unidas. (2020). Informe de los Objetivos de Desarrollo Sostenible 2020. https://unstats.un.org/sdgs/report/2020/TheSustainable-Development-Goals-Report-2020_Spanish.pdf 
+
+
+```{r}
+tabla <- read.xlsx(paste0(here::here(), "/Bases/Población con discapacidad por estados.xlsx"))
+
+colnames(tabla) <- c("CVE_GEO", 
+                     "Entidad Federativa", 
+                     "Población Total", 
+                     "Población con discapacidad", 
+                     "Con limitación y algún problema o condición mental",
+                     "Con discapacidad", 
+                     "Sólo con algún problema o condición.mental",
+                     "Tasa de Prevalencia")
+```
+
+<div style="height:400px;overflow:auto;">
+```{r, echo = FALSE}
+require(gt)
+
+tabla %>% 
+ gt() %>%
+  tab_header(title = "Población con discapacidad y/o problema o condición mental",
+             subtitle = "Censo de Población y Vivienda 2020") %>%
+   tab_footnote(footnote = "Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico") %>%
+     fmt_integer(columns = names(tabla)[3:6], 
+                 sep_mark = " ") %>%
+     tab_options(heading.title.font.size = 14, 
+                 heading.subtitle.font.size = 12,
+                 table.font.names = "Century Gothic",
+                 table.font.size = 10,
+                 data_row.padding = px(1)) %>%
+      tab_style(style = list(cell_text(align = "left",
+                                       weight = 'bold')),
+                locations = list(cells_title(groups = c("title")))) %>%
+       tab_style(style = list(cell_text(align = "left")),
+                 locations = list(cells_title(groups = c("subtitle")))) %>%
+        cols_width(starts_with("Entidad Federativa") ~ px(200),
+                   everything() ~ px(100)) %>%
+         as_raw_html() 
+```
+</div>
+
+
+
+### Prevalencia de la población con discapacidad y/o problema o condición mental  
+
+
+El **Instituto Nacional de Estadística, Geografía e Informática (`INEGI`)** tiene puestos a disposición del público los shapefiles con los distintos niveles de información geográfica. Estos archivos digitales se encuentran disponibles en el [`Marco Geoestadístico Nacional (MGN)`](https://www.inegi.org.mx/temas/mg/#Descargas), el cual es un sistema único y se presenta la división del territorio nacional en diferentes niveles de desagregación para referir geográficamente la información estadística de los censos y encuestas. Se integra al **Sistema Nacional de Información Estadística y Geográfica (`SNIEG`)**.
+
+Este producto integra información vectorial, tablas de atributos y catálogos. Muestra la división geoestadística del territorio nacional en sucesivos niveles del territorio. Esta división está dada por los llamados **límites estadísticos**, que pueden coincidir con los límites político-administrativos oficiales, los cuales tienen sustento legal.
+
+```{r, class.source = "fold-show", eval = FALSE}
+require(rgdal)
+shape_estados <- readOGR(dsn = "D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos", 
+                          layer = "00ent",
+                           encoding = "UTF-8",
+                            use_iconv = TRUE)
+
+shape_estados@data <- shape_estados@data %>%
+                       rename("CVE_GEO" = "CVEGEO")
+
+layer_estados <- merge(shape_estados,
+                        tabla %>% dplyr::select(-`Entidad Federativa`), 
+                         by = "CVE_GEO")
+
+require(sf)
+tbl_estados <- as_tibble(st_as_sf(shape_estados)) %>%
+                merge(., tabla %>% select(-`Entidad Federativa`),
+                      by = "CVE_GEO") %>% 
+                 
+```
+
+
 
