@@ -135,3 +135,29 @@ library(extrafont)
 # activar showtext
 windowsFonts()
 ```
+
+
+## Encuesta Nacional de la Dinámica Demográfica (ENADID), 2023 
+
+La **Encuesta Nacional de la Dinámica Demográfica (ENADID)** es una encuesta estadística que se realiza en México y tiene como objetivo generar información sobre los principales componentes de la dinámica demográfica de la población, como la fecundidad, mortalidad, migración y nupcialidad, así como aspectos de salud sexual y reproductiva. 
+
+
+- **Institución responsable:** Es realizada por el **Instituto Nacional de Estadística y Geografía (INEGI)**, en coordinación con el **Consejo Nacional de Población (CONAPO)** y otras instituciones.
+- **Periodicidad:** Se ha levantado aproximadamente cada cinco años desde 1992. Las ediciones más recientes son de **1992, 1997, 2006, 2009, 2014 y 2018**.
+- **Cobertura:** Es una encuesta nacional representativa, tanto a nivel nacional como por entidad federativa y zonas urbanas y rurales.
+- **Población objetivo:** Personas que residen en viviendas particulares en México.
+ 
+**Temas que aborda la ENADID** 
+
+- **Fecundidad:** Número de hijos nacidos vivos, hijos sobrevivientes, planificación familiar.
+- **Salud sexual y reproductiva:** Uso de métodos anticonceptivos, acceso a servicios de salud.
+- **Mortalidad infantil:** Defunciones de niños menores de cinco años.
+- **Nupcialidad y unión conyugal:** Edad al primer matrimonio o unión, duración de las uniones.
+- **Migración interna e internacional:** Lugar de residencia anterior, motivos de migración, retorno de migrantes.
+- **Características sociodemográficas:** Edad, sexo, nivel educativo, condición de actividad económica, entre otras.  
+
+
+**Diseño muestral**   
+
+
+![](../Output/ENADID 2023.png){width="90%" fig-align="center"}
