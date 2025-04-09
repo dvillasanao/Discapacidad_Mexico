@@ -64,6 +64,9 @@ instrumentos y encuestas:
 **Enlace**:
 <https://dvillasanao.github.io/Discapacidad_Mexico/Output/Discapacidad-en-Mexico.html>
 
+**Datos del Censo de Población y Vivienda 2020**:
+<https://dvillasanao.github.io/Discapacidad_Mexico/Output/Censo-2020_Discapacidad-en-Mexico.html>
+
 ## Código de Conducta
 
 Por favor, revisa nuestro [Código de Conducta](CODE_OF_CONDUCT.md) antes
