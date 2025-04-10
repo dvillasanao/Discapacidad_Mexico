@@ -159,8 +159,130 @@ La **Encuesta Nacional de la Dinámica Demográfica (ENADID)** es una encuesta e
 
 **Diseño muestral**   
 
+<br>
 
 ![](../Output/ENADID 2023.png){width="90%" fig-align="center"}
+<br>
+<br>
+
+**La Convención sobre los Derechos de las Personas con Discapacidad (`CDPCD`)**   
+
+En este contexto, la Convención sobre los Derechos de las Personas con Discapacidad (CDPCD) establece en su Artículo 31 lineamientos específicos sobre la recopilación de datos estadísticos, instando a los Estados miembros a mantener información actualizada sobre esta población[^1]. En consonancia con esta directriz, el Instituto Nacional de Estadística y Geografía (INEGI) presenta un análisis estadístico sobre la población con discapacidad de 5 años y más, basado en los resultados de la Encuesta Nacional de la Dinámica Demográfica (ENADID) 2023.
+
+[^1]:Recomendación del Grupo de Washington sobre Estadísticas de Discapacidad. Por los procesos del desarrollo infantil, especialmente en personas con menos de 5 años, se puede confundir la dificultad para realizar alguna de las actividades básicas; sin embargo, puede ser consecuencia de que aún no se adquiere por completo la habilidad para realizarla; por ejemplo, caminar, hablar o el autocuidado(Washington Group on Disability Statistics [WG], 2020).
+https://www.washingtongroup-disability.com/fileadmin/uploads/wg/Documents/primer.pdf
+
+**Resumen**  
+
+- Para el año 2023, según los datos estadísticos más recientes, la población de 5 años y más que vive con algún tipo de discapacidad en México alcanzó la cifra de **8.8 millones de personas**, con una distribución por género que muestra que el **46.5 % son hombres** y el **53.5 % son mujeres**.
+- El estado de **Zacatecas** destacó notablemente en las estadísticas nacionales al registrar el porcentaje más elevado de población de 5 años y más con discapacidad, alcanzando un significativo **11.2 por ciento de su población total** en este grupo demográfico.
+- En cuanto a la **participación en actividades económicas**, se observó una marcada diferencia entre géneros en la población de 15 años y más con discapacidad: los hombres mostraron una participación económica considerablemente mayor, alcanzando el 51.5 % de actividad laboral, mientras que en el caso de las mujeres, esta cifra se situó en el 31.3 %, evidenciando una brecha significativa en la inserción al mercado laboral. 
+
+
+### Población de 5 años y más, por grupo quinquenal de edad y sexo, según condición de discapacidad    
+
+Según los datos más recientes de la Encuesta Nacional Demográfica (`ENADID 2023`), la **población mexicana de 5 años y más** ascendió a **121.6 millones de habitantes**. De este total, aproximadamente **8.8 millones de personas (7.2 %) presentaron alguna discapacidad**, distribuidos entre **4.7 millones de mujeres (53.5 %)** y **4.1 millones de hombres (46.5 %)**. El análisis demográfico revela que la mayor proporción de personas con discapacidad corresponde al segmento de adultos mayores (60 años y más), representando el 50.0 % del total.  
+
+```{r, class.source = "fold-hide", eval = FALSE}
+require(readxl)
+require(ggplot2)
+require(ggpubr)
+require(Hmisc)
+require(tidyverse)
+require(tibble)
+require(data.table)
+require(ggpattern) 
+
+P.Discapacidad <- read_xlsx(paste0(here::here(), "/Bases/ENADID_2023.xlsx"), sheet = "Grupos de edad", range = "A4:E21")
+
+levels = c("De 0 a 4 años", "De 5 a 9 años", "De 10 a 14 años", "De 15 a 19 años", "De 20 a 24 años", "De 25 a 29 años",
+           "De 30 a 34 años", "De 35 a 39 años", "De 40 a 44 años", "De 45 a 49 años", "De 50 a 54 años", "De 55 a 59 años",
+           "De 60 a 64 años", "De 65 a 69 años", "De 70 a 74 años", "De 75 a 79 años", "De 80 a 84 años", "85 años y más")
+
+tabla.Población <- P.Discapacidad %>% 
+                    select(Grupos, "%H_SD", "%M_SD") %>%
+                     melt() %>% 
+                      mutate(percent = ifelse(variable %in% "%H_SD", -1 * .$value, .$value)) %>% 
+                       mutate(Grupos = factor(.$Grupos, levels = levels))
+
+tabla.Discapacidad <- P.Discapacidad %>% 
+                       select(Grupos, "%H_CD", "%M_CD") %>%
+                        melt() %>% 
+                         mutate(percent = ifelse(variable %in% "%H_CD", -1 * .$value, .$value)) %>% 
+                          mutate(Grupos = factor(.$Grupos, levels = levels))
+
+p <- ggplot() + 
+        geom_col_pattern(data = tabla.Discapacidad,
+                aes(x = percent,
+                    y = Grupos),
+                    color = "#1f6abd",
+                    pattern_fill = "#1f6abd",
+                    pattern_color = "transparent",
+                    pattern_angle = 115,
+                    pattern_density = 0.01,
+                    pattern_spacing = 0.005,
+                    fill = "transparent",
+                    alpha = 0.5,
+                    size = 0.5) + 
+         geom_col_pattern(data = tabla.Población,
+                aes(x = percent,
+                    y = Grupos),
+                    color = "#17bab1",
+                    pattern_fill = "#17bab1",
+                    pattern_color = "transparent",
+                    pattern_angle = 45,
+                    pattern_density = 0.01,
+                    pattern_spacing = 0.03,
+                    
+                    fill = "transparent",
+                    alpha = 0.3,
+                    size = 0.5) + 
+        geom_label(data = tabla.Discapacidad,
+                   aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                       y = Grupos,
+                       label = round(abs(value), 1)),
+                   fill = "white",
+                   color = "#295d97",
+                   alpha = 0.3, 
+                   family = "Montserrat Medium",
+                   label.size = 0) + 
+        geom_label(data = tabla.Población,
+                   aes(x = ifelse(percent < 0, percent -0.5, percent + 0.5),
+                       y = Grupos,
+                       label = round(abs(value), 1)),
+                   fill = "white",
+                   color = "#0e968f",
+                   alpha = 0.5, 
+                   family = "Montserrat Medium",
+                   label.size = 0) + 
+         theme_transparent() + 
+          theme(plot.title = element_text(size = 22, hjust = 0.15, family = "Montserrat", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "right"
+               ) + 
+         #  scale_fill_manual(values = paleta) + 
+          #  scale_color_manual(values = paleta) +
+             labs(title = "Población de 5 años y más, por grupo quinquenal de edad y sexo, según condición de discapacidad, 2023",
+                  subtitle = stringr::str_wrap("(porcentajes)", 50),
+                  x = "",
+                  y = "",
+                  fill = "",
+                  color = "",
+                  caption = expression(paste("Fuente: INEGI. Encuesta Nacional de la Dinámica Demográfica (ENADID), 2023. Base de datos. Sistema Nacional de Información Estadística y Geográfica (SNIEG). Información de Interés Nacional (IIN).")))
+  
+p
+
+#path = "Output/Piramide Población Total y Discapacidad_ENADID.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+![](../Output/Piramide Población Total y Discapacidad_ENADID.png){width="90%" fig-align="center"}
 
 ## Referencias  
 
