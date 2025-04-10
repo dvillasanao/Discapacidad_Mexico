@@ -284,6 +284,57 @@ p
 
 ![](../Output/Piramide Población Total y Discapacidad_ENADID.png){width="90%" fig-align="center"}
 
+#### Por estados 
+
+De acuerdo con los datos estadísticos más recientes, las entidades federativas que presentan una mayor proporción de población con discapacidad a partir de los 5 años de edad son Zacatecas con 11.2%, Tabasco con 10.1%, Durango con 9.9% y Oaxaca con 8.8%. En contraste, las entidades que registran menores porcentajes son Coahuila (5.2%), Chiapas (5.9%), Estado de México (6.1%), así como San Luis Potosí y Aguascalientes, ambos con 6.2%.  
+
+```{r, class.source = "fold-hide", eval = FALSE}
+P.Discapacidad <- read_xlsx(paste0(here::here(), "/Bases/ENADID_2023.xlsx"), sheet = "Estados", range = "A4:C37")
+
+tabla <- P.Discapacidad %>% 
+          arrange(Porcentaje) %>% 
+           mutate(color = ifelse(Entidad %in% "Nacional", "lightgrey", "#e7892c")) %>%
+            as.data.frame()
+
+Entidades <- tabla %>% pull(Entidad)  
+p <- tabla %>%
+      ggplot() + 
+        geom_col(aes(x = Porcentaje, y = factor(Entidad, Entidades)), color = "grey", fill = tabla$color) + 
+         geom_text(aes(x = Porcentaje, y = Entidad, label = Porcentaje),
+                   color = "black",
+                   hjust = -0.5, 
+                   fontface = "bold", 
+                   family = "Montserrat Medium") + 
+        theme_transparent() + 
+          theme(plot.title = element_text(size = 22, hjust = 0, family = "Montserrat SemiBold", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "none"
+               ) + 
+           scale_fill_viridis_d(option = "A", begin = 0.3, end = 0.7) + 
+            scale_color_viridis_d(option = "A", begin = 0.3, end = 0.7) +
+             labs(title = "Población de 5 años y más con discapacidad, por entidad federativa, 2023",
+                  subtitle = stringr::str_wrap("(porcentajes)", 50),
+                  x = "",
+                  y = "",
+                  fill = "",
+                  color = "",
+                  caption = expression(paste("Fuente: INEGI. Encuesta Nacional de la Dinámica Demográfica (ENADID), 2023. Base de datos. Sistema Nacional de Información Estadística y Geográfica (SNIEG). Información de Interés Nacional (IIN).")))
+p
+
+path = "Output/P.Discapacidad por estados_ENADID.pdf"
+ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+
+![](../Output/P.Discapacidad por estados_ENADID.png){width="90%" fig-align="center"}
+
+
+
 ## Referencias  
 
 INEGI. (2024). Comunicación social, Estadísticas a propósito del día internacional de las personas con discapacidad (3 de diciembre). Retrieved April 8, 2025, from https://www.un.org/es/observances/day-of-  
