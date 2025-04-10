@@ -531,7 +531,7 @@ P.Discapacidad %>%
               locations = list(cells_title(groups = c("title")))) %>%
       tab_style(style = list(cell_text(align = "left")),
                 locations = list(cells_title(groups = c("subtitle")))) %>%
-       cols_width(starts_with("Intituciones de afiliaciones a servicios de salud") ~ px(300),
+       cols_width(starts_with("Intituciones de afiliaciones a servicios de salud") ~ px(200),
                   everything() ~ px(100)) %>% 
         tab_spanner(label = "Sin Discapacidad",
                     columns = c(Total_SD, Hombres_SD, Mujeres_SD)) %>%
@@ -592,7 +592,7 @@ P.Discapacidad %>%
               locations = list(cells_title(groups = c("title")))) %>%
       tab_style(style = list(cell_text(align = "left")),
                 locations = list(cells_title(groups = c("subtitle")))) %>%
-       cols_width(starts_with("Nivel de escolaridad") ~ px(300),
+       cols_width(starts_with("Nivel de escolaridad") ~ px(200),
                   everything() ~ px(100)) %>% 
         tab_spanner(label = "Sin Discapacidad",
                     columns = c(Total_SD, Hombres_SD, Mujeres_SD)) %>%
