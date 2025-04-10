@@ -334,6 +334,63 @@ ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 ![](../Output/P.Discapacidad por estados_ENADID.png){width="90%" fig-align="center"}
 
 
+### Actividad con dificultas y causa que la origino  
+
+En la población de 5 años y más con discapacidad, se identificaron dos limitaciones principales: la dificultad visual, incluso con el uso de lentes correctivos (45.8%), y la movilidad reducida al caminar, subir o bajar escaleras (40.3%). El análisis por género reveló que el 43.3% de mujeres y 36.7% de hombres experimentaron restricciones de movilidad, mientras que el 48.5% de mujeres y 42.7% de hombres manifestaron dificultades visuales, aun utilizando lentes correctivos.
+
+```{r, class.source = "fold-hide", eval = FALSE}
+P.Discapacidad <- read_xlsx(paste0(here::here(), "/Bases/ENADID_2023.xlsx"), sheet = "Actividad con dificultad", range = "A4:D12")
+
+tabla <- P.Discapacidad %>% 
+          melt() %>% 
+           mutate(`Actividad con dificultad` = stringr::str_wrap(`Actividad con dificultad`, 50))
+
+p <- tabla %>%
+      ggplot() + 
+        geom_col(aes(x = value, 
+                     y = `Actividad con dificultad`,
+                     color = variable, 
+                     fill = variable, 
+                     group = variable),
+                 position = "dodge") + 
+         geom_text(aes(x = value, 
+                       y = `Actividad con dificultad`,
+                       label = value,
+                       color = variable,
+                       fill = variable, 
+                       group = variable),
+                   position = "dodge",
+                   hjust = -0.5, 
+                   fontface = "bold", 
+                   family = "Montserrat Medium") + 
+        theme_transparent() + 
+          theme(plot.title = element_text(size = 22, hjust = 0, family = "Montserrat SemiBold", face = "bold"),
+                plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat", face = "bold"),
+                plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+                axis.text = element_text(family = "Montserrat"), 
+                axis.title = element_text(family = "Montserrat", size = 15), 
+                legend.key.size = unit(0.5, "cm"),
+                legend.text = element_text(size = 12, family = "Montserrat"), 
+                legend.title = element_text(size = 10, hjust = 0.5, family = "Montserrat", face = "bold"),
+                legend.position = "none"
+               ) + 
+           scale_fill_viridis_d(option = "A", begin = 0.3, end = 0.7) + 
+            scale_color_viridis_d(option = "A", begin = 0.3, end = 0.7) +
+             labs(title = "Población de 5 años y más con discapacidad,1/ por actividad con dificultad, según sexo, 2023",
+                  subtitle = stringr::str_wrap("(porcentajes)", 50),
+                  x = "",
+                  y = "",
+                  fill = "",
+                  color = "",
+                  caption = expression(paste("Fuente: INEGI. Encuesta Nacional de la Dinámica Demográfica (ENADID), 2023. Base de datos. Sistema Nacional de Información Estadística y Geográfica (SNIEG). Información de Interés Nacional (IIN)."))) 
+
+p
+
+#path = "Output/P.Discapacidad por actividad_ENADID.pdf"
+#ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
+```
+![](../Output/P.Discapacidad por actividad_ENADID.png){width="90%" fig-align="center"}
+
 
 ## Referencias  
 
