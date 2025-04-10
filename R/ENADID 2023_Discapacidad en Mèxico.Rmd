@@ -446,7 +446,9 @@ p
 
 ![](../Output/P.Discapacidad por causas_ENADID.png){width="90%" fig-align="center"}
 
-### Tasa de participación económica de la población de 15 años y más, según condición de discapacidad y sexo  
+### Tasa de participación económica de la población de 15 años y más, según condición de discapacidad y sexo   
+
+Los datos de 2023 indican que la tasa de participación económica de la población de 15 años y más sin discapacidad alcanzó un 68.0%, en contraste con el 40.6% registrado en la población con discapacidad. En cuanto a la distribución por género, se observó que el 51.5% de los hombres con discapacidad se integró a actividades económicas, mientras que en el caso de las mujeres con discapacidad, la participación se situó en 31.3%.
 
 ```{r, class.source = "fold-hide", eval = FALSE}
 P.Discapacidad <- read_xlsx(paste0(here::here(), "/Bases/ENADID_2023.xlsx"), sheet = "PEA", range = "A3:D5")
@@ -501,6 +503,68 @@ ggexport(p, filename = path ,width = 9, height = 7, device = "cairo")
 
 
 ![](../Output/P.Discapacidad por PEA_ENADID.png){width="90%" fig-align="center"}
+
+
+### Afiliación en instituciones de salud  
+
+En el análisis del año 2023, se evidenció que la cobertura de servicios de salud para la población de 5 años y más con discapacidad se distribuía principalmente en instituciones de seguridad social (67.2%), similar a la tendencia observada en personas sin discapacidad (69.7%). Es notable destacar que la población con discapacidad presentó una mayor representación en instituciones públicas (17.9%) y programas sociales (12.1%), mientras que la población sin discapacidad mostró una presencia más significativa en instituciones privadas (5.6%).  
+
+
+```{r, echo = FALSE}
+P.Discapacidad <- read_xlsx(paste0(here::here(), "/Bases/ENADID_2023.xlsx"), sheet = "Servicios de Salud", range = "A7:G12") 
+
+require(gt)
+library(gtsummary)
+library(writexl)
+
+P.Discapacidad %>% 
+ gt() %>%
+  tab_header(title = "Población de 5 años y más con afiliación en alguna institución de salud, por institución de afiliación, según condición de discapacidad y sexo, 2023 ",
+             subtitle = "(porcentajes)") %>%
+   tab_options(heading.title.font.size = 14, 
+               heading.subtitle.font.size = 12,
+               table.font.names = "Century Gothic",
+               table.font.size = 10,
+               data_row.padding = px(1)) %>% 
+    tab_style(style = list(cell_text(align = "left",
+                                     weight = 'bold')),
+              locations = list(cells_title(groups = c("title")))) %>%
+      tab_style(style = list(cell_text(align = "left")),
+                locations = list(cells_title(groups = c("subtitle")))) %>%
+       cols_width(starts_with("Intituciones de afiliaciones a servicios de salud") ~ px(300),
+                  everything() ~ px(100)) %>% 
+        tab_spanner(label = "Sin Discapacidad",
+                    columns = c(Total_SD, Hombres_SD, Mujeres_SD)) %>%
+         tab_spanner(label = "Con Discapacidad",
+                     columns = c(Total_CD, Hombres_CD, Mujeres_CD)) %>%
+          cols_label(Total_SD = "Total",
+                     Hombres_SD = "Hombres",
+                     Mujeres_SD = "Mujeres",
+                     Total_CD = "Total",
+                     Hombres_CD = "Hombres",
+                     Mujeres_CD = "Mujeres") %>% 
+           tab_footnote(footnote = "Nota.- La suma de los porcentajes por institución puede ser mayor que 100 % debido a que algunas personas pudieron declarar afiliación a más de una institución. Se excluye a la población que no especificó su edad") %>%
+           tab_footnote(footnote = " INEGI. Encuesta Nacional de la Dinámica Demográfica (ENADID), 2023. Base de datos. Sistema Nacional
+ de Informac") %>%
+            tab_footnote(footnote = "Se refiere a las personas que tienen como respuesta «No tiene dificultad» o «lo hace con poca dificultad» en todas las actividades por las que se indaga.",
+                       locations = cells_column_spanners("Sin Discapacidad")) %>%
+            tab_footnote(footnote = "Se refiere a las personas que tienen como respuesta «Lo hace con mucha dificultad» o «No puede hacerlo», en cada una de las actividades por las cuales se indaga.",
+                       locations = cells_column_spanners("Con Discapacidad")) %>%
+            tab_footnote(footnote = "Incluye IMSS, ISSSTE o ISSSTE estatal y a PEMEX, Defensa o Marina.",
+                         locations = cells_body(columns = `Intituciones de afiliaciones a servicios de salud`,
+                                                rows = 1)) %>%
+            tab_footnote(footnote = "Incluye INSABI o Seguro Popular e IMSS-Bienestar.",
+                         locations = cells_body(columns = `Intituciones de afiliaciones a servicios de salud`,
+                                                rows = 2)) %>%
+            tab_footnote(footnote = "Incluye Centro de salud, hospital u otro instituto de salud de gobierno.",
+                         locations = cells_body(columns = `Intituciones de afiliaciones a servicios de salud`,
+                                                rows = 3)) %>%
+            tab_footnote(footnote = "Incluye seguro privado o de gastos médicos.",
+                         locations = cells_body(columns = `Intituciones de afiliaciones a servicios de salud`,
+                                                rows = 4)) %>%
+             as_raw_html()  
+             #gtsave(paste0(here::here(), "/Bases/Servicios de Salud_ENADID.docx"))
+```
 
 ## Referencias  
 
