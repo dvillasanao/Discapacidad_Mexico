@@ -566,6 +566,61 @@ P.Discapacidad %>%
              #gtsave(paste0(here::here(), "/Bases/Servicios de Salud_ENADID.docx"))
 ```
 
+
+### Población de 15 años y más, por nivel de escolaridad, según condición de discapacidad y sexo  
+
+Los datos educativos de 2023 revelan que la asistencia escolar en el grupo etario de 5 a 29 años presentó una diferencia notable: 46% para personas con discapacidad frente a 60% para la población general. En el análisis por género, la población sin discapacidad registró una asistencia de 59.7% en hombres y 61.0% en mujeres, mientras que en la población con discapacidad se observó una participación de 46.7% en mujeres y 45.9% en hombres.
+
+Respecto al nivel educativo, se identificó que el 14.9% de las personas de 15 años y más con discapacidad carecían de escolaridad, en contraste con el 3.2% de la población sin discapacidad. Es importante señalar que el nivel predominante tanto en mujeres (20.3%) como en hombres (20.1%) con discapacidad correspondió a la primaria incompleta.  
+
+```{r, echo = FALSE}
+P.Discapacidad <- read_xlsx(paste0(here::here(), "/Bases/ENADID_2023.xlsx"), sheet = "Escolaridad", range = "A6:G14") 
+
+require(gt)
+
+P.Discapacidad %>% 
+ gt() %>%
+  tab_header(title = "Población de 15 años y más, por nivel de escolaridad, según condición de discapacidad y sexo, 2023",
+             subtitle = "(porcentajes)") %>%
+   tab_options(heading.title.font.size = 14, 
+               heading.subtitle.font.size = 12,
+               table.font.names = "Century Gothic",
+               table.font.size = 10,
+               data_row.padding = px(1)) %>% 
+    tab_style(style = list(cell_text(align = "left",
+                                     weight = 'bold')),
+              locations = list(cells_title(groups = c("title")))) %>%
+      tab_style(style = list(cell_text(align = "left")),
+                locations = list(cells_title(groups = c("subtitle")))) %>%
+       cols_width(starts_with("Nivel de escolaridad") ~ px(300),
+                  everything() ~ px(100)) %>% 
+        tab_spanner(label = "Sin Discapacidad",
+                    columns = c(Total_SD, Hombres_SD, Mujeres_SD)) %>%
+         tab_spanner(label = "Con Discapacidad",
+                     columns = c(Total_CD, Hombres_CD, Mujeres_CD)) %>%
+          cols_label(Total_SD = "Total",
+                     Hombres_SD = "Hombres",
+                     Mujeres_SD = "Mujeres",
+                     Total_CD = "Total",
+                     Hombres_CD = "Hombres",
+                     Mujeres_CD = "Mujeres") %>% 
+           tab_footnote(footnote = "Nota.- No se incluye a la población que no especificó su edad. El porcentaje se calcula con respecto al total de población en cada condición de discapacidad y sexo.") %>%
+           tab_footnote(footnote = " INEGI. Encuesta Nacional de la Dinámica Demográfica (ENADID), 2023. Base de datos. Sistema Nacional
+ de Informac") %>%
+            tab_footnote(footnote = "Se refiere a las personas que tienen como respuesta «No tiene dificultad» o «lo hace con poca dificultad» en todas las actividades por las que se indaga.",
+                       locations = cells_column_spanners("Sin Discapacidad")) %>%
+            tab_footnote(footnote = "Se refiere a las personas que tienen como respuesta «Lo hace con mucha dificultad» o «No puede hacerlo», en cada una de las actividades por las cuales se indaga.",
+                       locations = cells_column_spanners("Con Discapacidad")) %>%
+            tab_footnote(footnote = "Incluye a la población con al menos un grado aprobado de bachillerato o equivalente.",
+                         locations = cells_body(columns = `Nivel de escolaridad`,
+                                                rows = 7)) %>%
+            tab_footnote(footnote = "Incluye a la población con al menos un grado aprobado de licenciatura o equivalente.",
+                         locations = cells_body(columns = `Nivel de escolaridad`,
+                                                rows = 8)) %>%
+             as_raw_html()  
+             #gtsave(paste0(here::here(), "/Bases/Servicios de Salud_ENADID.docx"))
+```
+
 ## Referencias  
 
 INEGI. (2024). Comunicación social, Estadísticas a propósito del día internacional de las personas con discapacidad (3 de diciembre). Retrieved April 8, 2025, from https://www.un.org/es/observances/day-of-  
