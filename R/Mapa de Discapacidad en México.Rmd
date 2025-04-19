@@ -133,3 +133,90 @@ library(extrafont)
 windowsFonts()
 ```
 
+## Censo de Población y Vivienda 2020
+
+En el Censo de Población y Vivienda, la población con discapacidad se estructura a través de una serie de preguntas y variables diseñadas para identificar a las personas con diferentes tipos y grados de discapacidad. El objetivo principal es obtener datos precisos que permitan conocer la magnitud, distribución y características de esta población para la formulación de políticas públicas y la asignación de recursos.
+
+Las principales preguntas y variables que se consideran en el Censo para identificar a la población con discapacidad son:
+
+**Dificultad para realizar actividades básicas:** Se pregunta sobre el grado de dificultad que tiene la persona para realizar actividades consideradas fundamentales en la vida diaria. Estas actividades incluyen:
+
+-   **Ver:** Aunque use lentes.
+-   **Oír:** Aunque use aparato auditivo.
+-   **Caminar, subir o bajar:** Usando sus piernas.
+-   **Recordar o concentrarse:** Incluye dificultades para aprender cosas nuevas o mantener la atención.
+-   **Bañarse, vestirse o comer:** Actividades de cuidado personal.
+-   **Hablar o comunicarse:** Entender o ser entendido por otras personas.
+-   **Mover o usar brazos o manos.**
+
+**Grado de dificultad:** Para cada una de las actividades mencionadas, se ofrecen diferentes opciones de respuesta que indican el nivel de dificultad:
+
+-   No tiene dificultad.
+
+-   Poca dificultad.
+
+-   Mucha dificultad.
+
+-   No puede hacerlo.
+
+**Problema o condición mental:** Se incluye una pregunta directa sobre si la persona tiene algún problema o condición mental, como autismo, síndrome de Down, esquizofrenia, etc.
+
+**Causa de la limitación o discapacidad:** En algunos cuestionarios ampliados del Censo, se pregunta sobre la causa principal de la limitación, discapacidad o problema mental. Esto ayuda a entender el origen de las discapacidades.   
+
+<p align="center">
+  <img src="../Output/Población%20con%20discapacidad_Page_5.png" alt="Población con discapacidad" width="90%">
+</p>
+**Elaboración propia**  
+
+## Marco Geoestadístico Nacional (`MGN`)
+
+El **Marco Geoestadístico Nacional (MGN)** del Instituto Nacional de Estadística y Geografía (INEGI) es un **sistema único y de carácter nacional** diseñado para **referenciar geográficamente la información estadística** que se genera a través de los censos y encuestas que realiza el Instituto, así como otra información estadística de interés nacional.
+
+-   **Área Geoestadística Estatal (AGEE)**
+-   **Área Geoestadística Municipal (AGEM)**
+-   **Área Geoestadística Básica (AGEB) urbana y rural**
+-   **Localidad geoestadística urbana y rural**
+-   **Manzana geoestadística**
+-   **Vialidad**
+-   **Frente de manzana**
+
+## Shapefiles
+
+A continuación, se leen y se transforman los shapefiles de las divisiones geográficas de los estados de México correspondientes a las siguientes desagregaciones geográficas.
+
+Utilizando la paquetería `rgdal`, se definen los siguientes parámetros:
+
+-   `readOGR`: Esta función se usa para leer shapefiles.\
+-   `dsn`: Especifica la ruta al directorio que contiene el shapefile.\
+-   `layer`: Especifica el nombre de la capa dentro del shapefile.\
+-   `encoding`: Especifica la codificación de los caracteres, en este caso, UTF-8.\
+-   `use_iconv`: Se usa para convertir la codificación si es necesario.
+
+Una vez cargados los sahpefiles, se transforman los sistemas de coordenadas:
+
+-   `spTransform`: Esta función se usa para transformar las coordenadas del shapefile a un nuevo sistema de referencia.\
+-   `CRSobj`: Especifica el sistema de referencia de coordenadas de destino. En este caso, se usa el sistema de coordenadas geográficas (latitud y longitud) basado en el elipsoide y `datum WGS84`.
+
+Estos pasos son cruciales para asegurar que los datos geoespaciales sean consistentes y compatibles para su uso en análisis geográficos y visualización, por ejemplo, en aplicaciones de Leaflet o cualquier otro software de mapeo.
+
+**Shapefile estados 2020**
+
+```{r, eval = FALSE}
+shape_estados <- readOGR(dsn = "D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos",
+                          layer = "00ent",
+                           encoding = "UTF-8",
+                            use_iconv = TRUE)
+
+shape_estados <- spTransform(shape_estados, CRSobj = CRS('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'))
+```
+
+**Shapefile municipios 2020**
+
+```{r, eval = FALSE}
+shape_municipios <- readOGR(dsn = "D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos",
+                             layer = "00mun",
+                              encoding = "UTF-8",
+                               use_iconv = TRUE)
+
+shape_municipios <- spTransform(shape_municipios, CRSobj = CRS('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'))
+```
