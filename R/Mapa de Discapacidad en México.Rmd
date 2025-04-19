@@ -269,12 +269,9 @@ head(mydata, 20) %>%
 
 Este código realiza las siguientes acciones:
 
-- Selecciona las columnas `CVE_ENT` y `GM_2020` de dataframe `IME_2020`.   
-- `stringr::str_trim(.$GM_, "both")`: Elimina los espacios en blanco al principio y al final de los valores en `GM_`.   
-- `fct_relevel(..., c("Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"))`: Reordena los niveles del factor `GM_` en el orden especificado.   
-- `spdplyr:::left_join.Spatial()`,  Realiza un merge entre shape_estados_ y el dataframe modificado, usando `CVE_ENT` como clave.   
+- `spdplyr:::left_join.Spatial()`,  Realiza un merge entre shape_municipios_ y el dataframe modificado, usando `CVEGEO` como clave.   
 
-El resultado es un nuevo objeto Spatial (layer_estados_2020) que combina la geometría de shape_estados con la información adicional de `IME_`, incluyendo la columna `GM_` con niveles reordenados.    
+El resultado es un nuevo objeto Spatial (layer_municipios) que combina la geometría de shape_municipios con la información adicional de `mydata`.    
 
 ```{r, class.source = "fold-show", eval = FALSE}
 layer_municipios <- spdplyr:::left_join.Spatial(shape_municipios,
@@ -287,7 +284,7 @@ layer_municipios <- spdplyr:::left_join.Spatial(shape_municipios,
 
 ## Mapa a nivel municipal  
 
-Este código calcula el **porcentaje de población con discapacidad** en cada municipio y luego **clasifica esos porcentajes en vigintiles** (20 grupos de igual tamaño, ya que se usa `seq(0, 1, 0.05)` que genera cortes cada 5%).
+Este código calcula el **porcentaje de población con discapacidad** en cada municipio y luego **clasifica esos porcentajes en deciles** (20 grupos de igual tamaño, ya que se usa `seq(0, 1, 0.05)` que genera cortes cada 5%).
 
 Paso a paso:
 

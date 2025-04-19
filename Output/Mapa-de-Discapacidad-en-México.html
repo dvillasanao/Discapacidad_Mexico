@@ -2430,25 +2430,13 @@ tabulados básicos del Censo de Población y Vivienda 2020 <a href="https://www.
 seccionan por grado de marginación</strong></p>
 <p>Este código realiza las siguientes acciones:</p>
 <ul>
-<li>Selecciona las columnas <code>CVE_ENT</code> y <code>GM_2020</code>
-de dataframe <code>IME_2020</code>.<br />
-</li>
-<li><code>stringr::str_trim(.$GM_, &quot;both&quot;)</code>: Elimina los espacios
-en blanco al principio y al final de los valores en
-<code>GM_</code>.<br />
-</li>
-<li><code>fct_relevel(..., c(&quot;Muy alto&quot;, &quot;Alto&quot;, &quot;Medio&quot;, &quot;Bajo&quot;, &quot;Muy bajo&quot;))</code>:
-Reordena los niveles del factor <code>GM_</code> en el orden
-especificado.<br />
-</li>
 <li><code>spdplyr:::left_join.Spatial()</code>, Realiza un merge entre
-shape_estados_ y el dataframe modificado, usando <code>CVE_ENT</code>
+shape_municipios_ y el dataframe modificado, usando <code>CVEGEO</code>
 como clave.</li>
 </ul>
-<p>El resultado es un nuevo objeto Spatial (layer_estados_2020) que
-combina la geometría de shape_estados con la información adicional de
-<code>IME_</code>, incluyendo la columna <code>GM_</code> con niveles
-reordenados.</p>
+<p>El resultado es un nuevo objeto Spatial (layer_municipios) que
+combina la geometría de shape_municipios con la información adicional de
+<code>mydata</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>layer_municipios <span class="ot">&lt;-</span> spdplyr<span class="sc">:::</span><span class="fu">left_join.Spatial</span>(shape_municipios,</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                                                 mydata <span class="sc">%&gt;%</span> </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                                                  <span class="fu">mutate</span>(<span class="at">CVEGEO =</span> <span class="fu">str_pad</span>(.<span class="sc">$</span>CVE_MUN, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">side =</span> <span class="st">&quot;left&quot;</span>, <span class="at">pad =</span> <span class="st">&quot;0&quot;</span>)),</span>
@@ -2459,7 +2447,7 @@ reordenados.</p>
 <h2>Mapa a nivel municipal</h2>
 <p>Este código calcula el <strong>porcentaje de población con
 discapacidad</strong> en cada municipio y luego <strong>clasifica esos
-porcentajes en vigintiles</strong> (20 grupos de igual tamaño, ya que se
+porcentajes en deciles</strong> (20 grupos de igual tamaño, ya que se
 usa <code>seq(0, 1, 0.05)</code> que genera cortes cada 5%).</p>
 <p>Paso a paso:</p>
 <ol style="list-style-type: decimal">
