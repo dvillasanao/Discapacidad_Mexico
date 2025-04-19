@@ -67,7 +67,10 @@ instrumentos y encuestas:
 **Datos del Censo de Población y Vivienda 2020**:
 <https://dvillasanao.github.io/Discapacidad_Mexico/Output/Censo-2020_Discapacidad-en-Mexico.html>
 
-**Datos dea ENADID 2023**:
+**Mapa a nivel municipal**:
+<https://dvillasanao.github.io/Discapacidad_Mexico/Output/Mapa-de-Discapacidad-en-México.html>
+
+**Datos del ENADID 2023**:
 <https://dvillasanao.github.io/Discapacidad_Mexico/Output/ENADID-2023_Discapacidad-en-Mèxico.html>
 
 ## Código de Conducta
