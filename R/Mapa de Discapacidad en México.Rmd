@@ -218,5 +218,146 @@ shape_municipios <- readOGR(dsn = "D:/MGN/MGN 2020/MGN 2020/conjunto_de_datos",
                               encoding = "UTF-8",
                                use_iconv = TRUE)
 
+shape_municipios <- shape_municipios %>%
+                     sp::spChFIDs(., str_pad(shape_municipios@data$CVEGEO, 5, "left", pad = "0"))
+
 shape_municipios <- spTransform(shape_municipios, CRSobj = CRS('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs'))
 ```
+
+Se cargan las bases de datos de discapacidad, obtenido del los tabulados básicos del Censo de Población y Vivienda 2020 [(Enlace)](https://www.inegi.org.mx/programas/ccpv/2020/#tabulados)  
+
+```{r, eval = TRUE}
+mydata <- read.xlsx("Bases/Población con discapacidad por municipios.xlsx", 
+                    sheet = "Municipios", 
+                    colNames = TRUE,
+                    startRow = 4)
+``` 
+
+
+<div style="height:400px;overflow:auto;">
+```{r, echo = FALSE, eval = TRUE}
+require(gt)
+
+head(mydata, 20) %>% 
+ gt() %>%
+  tab_header(title = "Población total   Por: Entidad y municipio   Según: Limitación o discapacidad y número",
+             subtitle = "Censo de Población y Vivienda 2020") %>%
+   tab_footnote(footnote = "Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico") %>%
+     fmt_integer(columns = names(mydata)[3:14], 
+                sep_mark = " ") %>%
+     tab_options(heading.title.font.size = 14, 
+                 heading.subtitle.font.size = 12,
+                 table.font.names = "Century Gothic",
+                 table.font.size = 10,
+                 data_row.padding = px(1)) %>%
+      tab_style(style = list(cell_text(align = "left",
+                                       weight = 'bold')),
+                locations = list(cells_title(groups = c("title")))) %>%
+       tab_style(style = list(cell_text(align = "left")),
+                 locations = list(cells_title(groups = c("subtitle")))) %>%
+        cols_width(starts_with("Municipio") ~ px(300),
+                   everything() ~ px(100)) %>%
+         as_raw_html() 
+```
+</div>
+
+
+
+### SpatialPolygons ➡️ data.frame     
+
+**Se insertan los datos del índice de marginación y se seccionan por grado de marginación**  
+
+Este código realiza las siguientes acciones:
+
+- Selecciona las columnas `CVE_ENT` y `GM_2020` de dataframe `IME_2020`.   
+- `stringr::str_trim(.$GM_, "both")`: Elimina los espacios en blanco al principio y al final de los valores en `GM_`.   
+- `fct_relevel(..., c("Muy alto", "Alto", "Medio", "Bajo", "Muy bajo"))`: Reordena los niveles del factor `GM_` en el orden especificado.   
+- `spdplyr:::left_join.Spatial()`,  Realiza un merge entre shape_estados_ y el dataframe modificado, usando `CVE_ENT` como clave.   
+
+El resultado es un nuevo objeto Spatial (layer_estados_2020) que combina la geometría de shape_estados con la información adicional de `IME_`, incluyendo la columna `GM_` con niveles reordenados.    
+
+```{r, class.source = "fold-show", eval = FALSE}
+layer_municipios <- spdplyr:::left_join.Spatial(shape_municipios,
+                                                 mydata %>% 
+                                                  mutate(CVEGEO = str_pad(.$CVE_MUN, width = 5, side = "left", pad = "0")),
+                                                   by = c("CVEGEO"))
+```
+
+
+
+## Mapa a nivel municipal  
+
+Este código calcula el **porcentaje de población con discapacidad** en cada municipio y luego **clasifica esos porcentajes en vigintiles** (20 grupos de igual tamaño, ya que se usa `seq(0, 1, 0.05)` que genera cortes cada 5%).
+
+Paso a paso:
+
+1. **`mutate(Pob.Discapacidad = ...`**: Crea una nueva variable que representa el porcentaje de población con discapacidad respecto al total.
+2. **`mutate(decil_discapacidad = cut(...`**: Divide esa variable en 20 grupos (vigintiles) según su distribución.
+
+
+```{r, class.source = "fold-hide", eval = FALSE}
+# Paquete 
+require(ggspatial)
+
+paleta <- colorRampPalette(pals::kovesi.linear_bmy_10_95_c78(10))(5)
+
+layer_municipios <- layer_municipios %>%
+                      mutate(Pob.Discapacidad = .$`Población.con.discapacidad`/.$Total * 100) %>%
+                       mutate(decil_discapacidad = cut(Pob.Discapacidad,
+                                                       breaks = quantile(Pob.Discapacidad, probs = seq(0, 1, 0.05), na.rm = TRUE),
+                                                       include.lowest = TRUE,
+                                                       labels = FALSE))
+
+p <- ggplot() + 
+      layer_spatial(layer_municipios, aes(fill = decil_discapacidad), color = "transparent") + 
+       layer_spatial(layer_estados, 
+                     color = "lightgrey", 
+                     fill = "transparent",
+                     size = 0.6) + 
+        theme_transparent() + 
+         theme(plot.title = element_text(size = 21, hjust = 0.15, family = "Montserrat", face = "bold"),
+               plot.subtitle = element_text(size = 18, hjust = 0, family = "Montserrat Medium"),
+               plot.caption = element_text(size = 11, hjust = 0.2, vjust = 1, family = "Montserrat"), 
+               axis.text = element_blank(),
+               axis.title = element_blank(),
+               axis.ticks = element_blank(),
+               legend.key.size = unit(0.5, "cm"),
+               legend.text = element_text(size = 10, family = "Montserrat"), 
+               legend.title = element_text(size = 12, hjust = 0.5, family = "Montserrat", face = "bold"),
+               legend.position = c(0.8, 0.7)) + 
+          scale_fill_viridis_c(option = "F", direction = -1) + 
+           # scale_color_viridis_d(option = "B") + 
+     labs(title = "Porcentaje de población con discapacidad a nivel municipal, 2020",
+           fill = stringr::str_wrap("%", 10), 
+            caption = expression(paste("Fuente: INEGI. Censo de Población y Vivienda 2020. Tabulados del Cuestionario Básico")))
+
+#path = "Output/Mapa de porcentaje de poblacion con discapacidad_Municipal.pdf"
+#ggexport(p, width = 8, height = 5, res = 400, filename = path)
+
+p
+```
+
+![](../Output/Mapa de porcentaje de poblacion con discapacidad_Municipal.png){width="90%" fig-align="center"}
+
+
+## Referencias  
+
+Librerias que se usaron en el documento
+
+```{r, echo = FALSE, eval = TRUE}
+sesion_info <- devtools::session_info()
+require(knitr)
+require(kableExtra)
+kable(dplyr::select(tibble::as_tibble(sesion_info$packages %>% dplyr::filter(attached == TRUE)),
+                    c(package, loadedversion, source))) %>%
+ kable_styling(font_size = 10, 
+               bootstrap_options = c("condensed", "responsive", "bordered")) %>%
+  kable_classic(full_width = TRUE, html_font = "montserrat") %>% 
+   scroll_box(width = "100%", height = "400px") %>%  
+    gsub("font-size: initial !important;", "font-size: 10pt !important;", .)
+```
+
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a><br />This work by [**Diana Villasana Ocampo**]{xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"} is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
+
+
